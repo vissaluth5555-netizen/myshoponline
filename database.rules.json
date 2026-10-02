@@ -1,0 +1,154 @@
+{
+  "rules": {
+    "admins": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": false
+      }
+    },
+
+    "users": {
+      ".read": "root.child('admins').child(auth.uid).val() === true",
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('admins').child(auth.uid).val() === true)",
+        ".write": "auth != null && (auth.uid === $uid || root.child('admins').child(auth.uid).val() === true)",
+        ".validate": "newData.hasChildren(['username', 'email'])",
+        "balance": {
+          ".write": "root.child('admins').child(auth.uid).val() === true",
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "username": {
+          ".validate": "newData.isString() && newData.val().length >= 3 && newData.val().length <= 20"
+        },
+        "email": {
+          ".write": "root.child('admins').child(auth.uid).val() === true",
+          ".validate": "newData.isString() && newData.val().matches(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/)"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        }
+      }
+    },
+
+    "products": {
+      ".read": true,
+      ".write": "root.child('admins').child(auth.uid).val() === true",
+      "$productId": {
+        ".validate": "newData.hasChildren(['name', 'price', 'stock'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100"
+        },
+        "price": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "stock": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "order": {
+          ".validate": "newData.isNumber() && newData.val() >= 1"
+        },
+        "category": {
+          ".validate": "newData.isString() && newData.val().length <= 50"
+        },
+        "image": {
+          ".validate": "newData.isString()"
+        },
+        "description": {
+          ".validate": "newData.isString() && newData.val().length <= 1000"
+        }
+      }
+    },
+
+    "orders": {
+      ".read": "root.child('admins').child(auth.uid).val() === true",
+      "$orderId": {
+        ".read": "auth != null && (data.child('uid').val() === auth.uid || root.child('admins').child(auth.uid).val() === true)",
+        ".write": "auth != null && ((!data.exists() && newData.child('uid').val() === auth.uid && newData.child('status').val() === 'pending' && newData.hasChildren(['uid', 'items', 'total', 'status'])) || root.child('admins').child(auth.uid).val() === true)",
+        ".validate": "newData.hasChildren(['uid', 'items', 'total', 'status'])",
+        "uid": {
+          ".validate": "newData.isString()"
+        },
+        "total": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "status": {
+          ".validate": "newData.val() === 'pending' || newData.val() === 'paid' || newData.val() === 'failed' || newData.val() === 'cancelled'"
+        },
+        "shippingFee": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "discount": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "items": {
+          ".validate": "newData.hasChildren()"
+        },
+        "customerName": {
+          ".validate": "newData.isString() && newData.val().length <= 100"
+        },
+        "phone": {
+          ".validate": "newData.isString() && newData.val().length <= 20"
+        },
+        "deliveryType": {
+          ".validate": "newData.val() === 'home' || newData.val() === 'pickup'"
+        },
+        "street": {
+          ".validate": "newData.isString() && newData.val().length <= 200"
+        },
+        "city": {
+          ".validate": "newData.isString() && newData.val().length <= 100"
+        },
+        "notes": {
+          ".validate": "newData.isString() && newData.val().length <= 500"
+        },
+        "paymentId": {
+          ".validate": "newData.isString() || newData.val() === null"
+        },
+        "paidAt": {
+          ".validate": "newData.isNumber()"
+        }
+      }
+    },
+
+    "discountCodes": {
+      ".read": "auth != null",
+      ".write": "root.child('admins').child(auth.uid).val() === true",
+      "$codeId": {
+        ".validate": "newData.hasChildren(['code', 'type', 'value', 'active'])",
+        "code": {
+          ".validate": "newData.isString() && newData.val().length >= 2 && newData.val().length <= 20"
+        },
+        "type": {
+          ".validate": "newData.val() === 'fixed' || newData.val() === 'percent'"
+        },
+        "value": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "active": {
+          ".validate": "newData.isBoolean()"
+        }
+      }
+    },
+
+    "topups": {
+      ".read": "root.child('admins').child(auth.uid).val() === true",
+      "$topupId": {
+        ".read": "auth != null && (data.child('uid').val() === auth.uid || root.child('admins').child(auth.uid).val() === true)",
+        ".write": "auth != null && ((!data.exists() && newData.child('uid').val() === auth.uid && newData.child('status').val() === 'pending') || root.child('admins').child(auth.uid).val() === true)",
+        ".validate": "newData.hasChildren(['uid', 'amount', 'status'])",
+        "uid": {
+          ".validate": "newData.isString()"
+        },
+        "amount": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "status": {
+          ".validate": "newData.val() === 'pending' || newData.val() === 'approved' || newData.val() === 'rejected'"
+        }
+      }
+    }
+  }
+}

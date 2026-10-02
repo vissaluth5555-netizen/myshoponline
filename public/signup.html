@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signup - MYSHOP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', system-ui, sans-serif; }
+    html, body { height: 100%; }
+    body { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #0f0c1a; padding: 30px 16px; }
+    .login-container { width: 100%; max-width: 420px; }
+    .login-card { background: rgba(255,255,255,0.04); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 36px 32px 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.4); }
+    .logo { text-align: center; font-size: 32px; font-weight: 800; letter-spacing: 4px; margin-bottom: 6px; display: flex; justify-content: center; gap: 1px; }
+    .logo span { display: inline-block; background: linear-gradient(90deg, #ff0040, #ff00ff, #00ffff, #00ff40, #ffff00, #ff0040); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: rgbMove 4s linear infinite, bounce 1.4s ease-in-out infinite; }
+    @keyframes rgbMove { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .logo span:nth-child(1) { animation-delay: 0s, 0.0s; }
+    .logo span:nth-child(2) { animation-delay: 0s, 0.1s; }
+    .logo span:nth-child(3) { animation-delay: 0s, 0.2s; }
+    .logo span:nth-child(4) { animation-delay: 0s, 0.3s; }
+    .logo span:nth-child(5) { animation-delay: 0s, 0.4s; }
+    .logo span:nth-child(6) { animation-delay: 0s, 0.5s; }
+    .glow-line { height: 3px; width: 70px; margin: 0 auto 20px; border-radius: 10px; background: linear-gradient(90deg, #ff4d8d, #9b4dff); box-shadow: 0 0 12px rgba(155,77,255,0.5); }
+    .welcome { text-align: center; color: #e2e8f0; font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+    .subtitle { text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 24px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 500; color: #cbd5e1; margin-bottom: 6px; }
+    .form-group input { width: 100%; padding: 13px 15px; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 12px; font-size: 16px; color: #f1f5f9; outline: none; }
+    .form-group input:focus { border-color: #9b4dff; background: rgba(155,77,255,0.08); box-shadow: 0 0 0 4px rgba(155,77,255,0.15); }
+    .form-group input.valid { border-color: rgba(34,197,94,0.6); }
+    .form-group input.invalid { border-color: rgba(239,68,68,0.6); }
+    .password-wrapper { position: relative; }
+    .password-wrapper input { padding-right: 48px; }
+    .toggle-password { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; }
+    .password-hint { font-size: 11px; color: #64748b; margin-top: 5px; }
+    .password-hint.valid { color: #22c55e; }
+    .password-strength { display: flex; gap: 4px; margin-top: 6px; }
+    .strength-bar { flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 3px; }
+    .strength-bar.weak { background: #ef4444; }
+    .strength-bar.medium { background: #f59e0b; }
+    .strength-bar.strong { background: #22c55e; }
+    .login-btn { width: 100%; padding: 15px; background: linear-gradient(90deg, #ff4d8d, #9b4dff); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .login-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+    .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .signup-link { text-align: center; margin-top: 22px; font-size: 14px; color: #94a3b8; }
+    .signup-link a { color: #c084fc; font-weight: 600; text-decoration: none; }
+    .alert { padding: 12px 16px; border-radius: 12px; font-size: 13px; margin-bottom: 18px; display: none; align-items: center; gap: 10px; }
+    .alert.show { display: flex; }
+    .alert.error { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+    .alert.success { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3); color: #86efac; }
+    .alert.info { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.3); color: #93c5fd; }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="logo"><span>M</span><span>Y</span><span>S</span><span>H</span><span>O</span><span>P</span></div>
+      <div class="glow-line"></div>
+      <h2 class="welcome">Create Account</h2>
+      <p class="subtitle">បង្កើតគណនីដើម្បីចាប់ផ្តើមទិញ</p>
+      <div id="alertBox" class="alert"></div>
+      <form id="signupForm" novalidate>
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="username" placeholder="ជ្រើស Username (3-20 តួ)" required autocomplete="username">
+          <div class="password-hint" id="usernameHint">អក្សរ, លេខ, _ ឬខ្មែរ (3-20 តួ)</div>
+        </div>
+        <div class="form-group"><label>Email</label><input type="email" id="email" placeholder="Enter your email" required autocomplete="email"></div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="password" placeholder="យ៉ាងហោចណាស់ 8 តួ" required autocomplete="new-password">
+            <button type="button" class="toggle-password" id="togglePassword"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+          </div>
+          <div class="password-strength">
+            <div class="strength-bar" id="bar1"></div>
+            <div class="strength-bar" id="bar2"></div>
+            <div class="strength-bar" id="bar3"></div>
+            <div class="strength-bar" id="bar4"></div>
+          </div>
+          <div class="password-hint" id="passwordHint">ត្រូវមានអក្សរធំ អក្សរតូច និងលេខ</div>
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="confirmPassword" placeholder="បញ្ជាក់ Password" required autocomplete="new-password">
+            <button type="button" class="toggle-password" id="toggleConfirm"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+          </div>
+          <div class="password-hint" id="confirmHint"></div>
+        </div>
+        <button type="submit" class="login-btn" id="signupBtn">Sign Up</button>
+      </form>
+      <div class="signup-link">មានគណនីរួចហើយ? <a href="/login">Login</a></div>
+    </div>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD5RLQZCt7c12zqwo4mn8AU5phbv6fmpLI",
+      authDomain: "mynewshop-3fcb7.firebaseapp.com",
+      databaseURL: "https://mynewshop-3fcb7-default-rtdb.firebaseio.com",
+      projectId: "mynewshop-3fcb7",
+      storageBucket: "mynewshop-3fcb7.firebasestorage.app",
+      messagingSenderId: "914506490670",
+      appId: "1:914506490670:web:817b0339ee0c98fba690bf"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+    const alertBox = document.getElementById('alertBox');
+    let alertTimer = null;
+    function showAlert(message, type = 'error') {
+      if (alertTimer) clearTimeout(alertTimer);
+      alertBox.className = 'alert show ' + type;
+      alertBox.innerHTML = message;
+      if (type === 'error') alertTimer = setTimeout(() => alertBox.classList.remove('show'), 6000);
+    }
+    function hideAlert() { alertBox.classList.remove('show'); if (alertTimer) clearTimeout(alertTimer); }
+    const usernameRegex = /^[a-zA-Z0-9_\u1780-\u17FF]{3,20}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordInput = document.getElementById('password');
+    const bars = [document.getElementById('bar1'), document.getElementById('bar2'), document.getElementById('bar3'), document.getElementById('bar4')];
+    const passwordHint = document.getElementById('passwordHint');
+    function checkPasswordStrength(pwd) {
+      let score = 0;
+      if (pwd.length >= 8) score++;
+      if (/[a-z]/.test(pwd) && /[A-Z]/.test(pwd)) score++;
+      if (/[0-9]/.test(pwd)) score++;
+      if (/[^a-zA-Z0-9]/.test(pwd)) score++;
+      bars.forEach((bar, i) => {
+        bar.className = 'strength-bar';
+        if (i < score) {
+          if (score <= 1) bar.classList.add('weak');
+          else if (score <= 2) bar.classList.add('medium');
+          else bar.classList.add('strong');
+        }
+      });
+      const hasUpper = /[A-Z]/.test(pwd), hasLower = /[a-z]/.test(pwd), hasNumber = /[0-9]/.test(pwd), longEnough = pwd.length >= 8;
+      if (!pwd) { passwordHint.textContent = 'ត្រូវមានអក្សរធំ អក្សរតូច និងលេខ'; passwordHint.className = 'password-hint'; return; }
+      if (longEnough && hasUpper && hasLower && hasNumber) {
+        passwordHint.textContent = '✅ Password ល្អ'; passwordHint.className = 'password-hint valid';
+      } else {
+        const missing = [];
+        if (!longEnough) missing.push('8 តួ');
+        if (!hasUpper) missing.push('អក្សរធំ');
+        if (!hasLower) missing.push('អក្សរតូច');
+        if (!hasNumber) missing.push('លេខ');
+        passwordHint.textContent = '⚠️ ត្រូវការ: ' + missing.join(', ');
+        passwordHint.className = 'password-hint';
+      }
+    }
+    passwordInput.addEventListener('input', () => {
+      checkPasswordStrength(passwordInput.value);
+      const confirm = document.getElementById('confirmPassword').value;
+      if (confirm) checkConfirmMatch();
+    });
+    const usernameInput = document.getElementById('username');
+    const usernameHint = document.getElementById('usernameHint');
+    usernameInput.addEventListener('input', () => {
+      const val = usernameInput.value.trim();
+      if (!val) { usernameInput.classList.remove('valid', 'invalid'); usernameHint.textContent = 'អក្សរ, លេខ, _ ឬខ្មែរ (3-20 តួ)'; usernameHint.className = 'password-hint'; return; }
+      if (usernameRegex.test(val)) {
+        usernameInput.classList.add('valid'); usernameInput.classList.remove('invalid');
+        usernameHint.textContent = '✅ Username ត្រឹមត្រូវ'; usernameHint.className = 'password-hint valid';
+      } else {
+        usernameInput.classList.add('invalid'); usernameInput.classList.remove('valid');
+        usernameHint.textContent = '❌ ត្រូវមាន 3-20 តួ'; usernameHint.className = 'password-hint';
+      }
+    });
+    const confirmInput = document.getElementById('confirmPassword');
+    const confirmHint = document.getElementById('confirmHint');
+    function checkConfirmMatch() {
+      const pwd = passwordInput.value, confirm = confirmInput.value;
+      if (!confirm) { confirmInput.classList.remove('valid', 'invalid'); confirmHint.textContent = ''; return; }
+      if (pwd === confirm) {
+        confirmInput.classList.add('valid'); confirmInput.classList.remove('invalid');
+        confirmHint.textContent = '✅ Password ត្រូវគ្នា'; confirmHint.className = 'password-hint valid';
+      } else {
+        confirmInput.classList.add('invalid'); confirmInput.classList.remove('valid');
+        confirmHint.textContent = '❌ Password មិនត្រូវគ្នា'; confirmHint.className = 'password-hint';
+      }
+    }
+    confirmInput.addEventListener('input', checkConfirmMatch);
+    function setupToggle(btnId, inputId) {
+      document.getElementById(btnId).addEventListener('click', () => {
+        const input = document.getElementById(inputId);
+        const btn = document.getElementById(btnId);
+        if (input.type === 'password') {
+          input.type = 'text';
+          btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+        } else {
+          input.type = 'password';
+          btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+        }
+      });
+    }
+    setupToggle('togglePassword', 'password');
+    setupToggle('toggleConfirm', 'confirmPassword');
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideAlert();
+      const username = usernameInput.value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = passwordInput.value;
+      const confirmPassword = confirmInput.value;
+      const btn = document.getElementById('signupBtn');
+      if (!username) { showAlert('❌ សូមបញ្ចូល Username', 'error'); usernameInput.focus(); return; }
+      if (!usernameRegex.test(username)) { showAlert('❌ Username ត្រូវមាន 3-20 តួ', 'error'); usernameInput.focus(); return; }
+      if (!email || !emailRegex.test(email)) { showAlert('❌ Email មិនត្រឹមត្រូវ', 'error'); return; }
+      if (password.length < 8) { showAlert('❌ Password ត្រូវមានយ៉ាងហោចណាស់ 8 តួ', 'error'); passwordInput.focus(); return; }
+      if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) { showAlert('❌ Password ត្រូវមានអក្សរធំ អក្សរតូច និងលេខ', 'error'); passwordInput.focus(); return; }
+      if (password !== confirmPassword) { showAlert('❌ Password មិនត្រូវគ្នា', 'error'); confirmInput.focus(); return; }
+      btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> កំពុងបង្កើត...';
+      try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        try {
+          await db.ref('users/' + user.uid).set({
+            username: username, email: email, balance: 0,
+            createdAt: firebase.database.ServerValue.TIMESTAMP
+          });
+          user.sendEmailVerification().catch(() => {});
+          showAlert('✅ បង្កើតគណនីជោគជ័យ!<br><small>កំពុងបញ្ជូនទៅ Login...</small>', 'success');
+          setTimeout(() => { window.location.href = '/login'; }, 1500);
+        } catch (dbErr) {
+          try { await user.delete(); } catch (delErr) {}
+          throw new Error('មិនអាចរក្សាទុកព័ត៌មានក្នុង Database បានទេ');
+        }
+      } catch (error) {
+        const messages = {
+          'auth/email-already-in-use': 'Email នេះត្រូវបានប្រើរួចហើយ',
+          'auth/invalid-email': 'Email មិនត្រឹមត្រូវ',
+          'auth/weak-password': 'Password ខ្សោយពេក',
+          'auth/network-request-failed': 'Network មានបញ្ហា',
+          'auth/too-many-requests': 'ព្យាយាមច្រើនដងពេក សូមរង់ចាំបន្តិច'
+        };
+        showAlert('❌ ' + (messages[error.code] || error.message || 'មានបញ្ហាមិនស្គាល់'), 'error');
+        btn.disabled = false; btn.textContent = 'Sign Up';
+      }
+    });
+    window.addEventListener('load', () => { if (window.innerWidth > 768) usernameInput.focus(); });
+  </script>
+</body>
+</html>

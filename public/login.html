@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com wss://*.firebaseio.com;">
+  <title>Login - MYSHOP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', system-ui, sans-serif; }
+    html, body { height: 100%; }
+    body { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #0f0c1a; overflow-x: hidden; padding: 20px 16px; position: relative; }
+    .login-container { position: relative; z-index: 10; width: 100%; max-width: 400px; }
+    .login-card { background: rgba(255,255,255,0.04); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 40px 32px; box-shadow: 0 25px 50px rgba(0,0,0,0.4); }
+    .logo { text-align: center; font-size: 32px; font-weight: 800; letter-spacing: 4px; margin-bottom: 8px; display: flex; justify-content: center; gap: 1px; }
+    .logo span { display: inline-block; background: linear-gradient(90deg, #ff0040, #ff00ff, #00ffff, #00ff40, #ffff00, #ff0040); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: rgbMove 4s linear infinite, bounce 1.4s ease-in-out infinite; }
+    @keyframes rgbMove { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .logo span:nth-child(1) { animation-delay: 0s, 0.0s; }
+    .logo span:nth-child(2) { animation-delay: 0s, 0.1s; }
+    .logo span:nth-child(3) { animation-delay: 0s, 0.2s; }
+    .logo span:nth-child(4) { animation-delay: 0s, 0.3s; }
+    .logo span:nth-child(5) { animation-delay: 0s, 0.4s; }
+    .logo span:nth-child(6) { animation-delay: 0s, 0.5s; }
+    .glow-line { height: 3px; width: 70px; margin: 0 auto 24px; border-radius: 10px; background: linear-gradient(90deg, #ff4d8d, #9b4dff); box-shadow: 0 0 12px rgba(155,77,255,0.5); }
+    .welcome { text-align: center; color: #e2e8f0; font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+    .subtitle { text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 32px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 500; color: #cbd5e1; margin-bottom: 8px; }
+    .form-group input { width: 100%; padding: 14px 16px; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 12px; font-size: 16px; color: #f1f5f9; outline: none; }
+    .form-group input:focus { border-color: #9b4dff; background: rgba(155,77,255,0.08); box-shadow: 0 0 0 4px rgba(155,77,255,0.15); }
+    .password-wrapper { position: relative; }
+    .password-wrapper input { padding-right: 48px; }
+    .toggle-password { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; padding: 4px; }
+    .forgot-link { text-align: right; margin-top: -6px; margin-bottom: 22px; }
+    .forgot-link a { color: #c084fc; font-size: 13px; text-decoration: none; }
+    .login-btn { width: 100%; padding: 15px; background: linear-gradient(90deg, #ff4d8d, #9b4dff); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .login-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+    .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .signup-link { text-align: center; margin-top: 24px; font-size: 14px; color: #94a3b8; }
+    .signup-link a { color: #c084fc; font-weight: 600; text-decoration: none; }
+    .alert { padding: 12px 16px; border-radius: 12px; font-size: 13px; margin-bottom: 18px; display: none; align-items: center; gap: 10px; }
+    .alert.show { display: flex; }
+    .alert.error { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+    .alert.success { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3); color: #86efac; }
+    .alert.info { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.3); color: #93c5fd; }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="logo"><span>M</span><span>Y</span><span>S</span><span>H</span><span>O</span><span>P</span></div>
+      <div class="glow-line"></div>
+      <h2 class="welcome">Login page</h2>
+      <p class="subtitle">សូម Login ដើម្បីចូលគណនីរបស់អ្នក</p>
+      <div id="alertBox" class="alert"></div>
+      <form id="loginForm">
+        <div class="form-group"><label>Email</label><input type="email" id="email" placeholder="Enter your email" required autocomplete="email"></div>
+        <div class="form-group"><label>Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
+            <button type="button" class="toggle-password" id="togglePassword"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+          </div>
+        </div>
+        <div class="forgot-link"><a href="#" id="forgotPassword">ភ្លេច Password?</a></div>
+        <button type="submit" class="login-btn" id="loginBtn">Login</button>
+      </form>
+      <div class="signup-link">អ្នកថ្មី? <a href="/signup">Signup</a></div>
+    </div>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD5RLQZCt7c12zqwo4mn8AU5phbv6fmpLI",
+      authDomain: "mynewshop-3fcb7.firebaseapp.com",
+      databaseURL: "https://mynewshop-3fcb7-default-rtdb.firebaseio.com",
+      projectId: "mynewshop-3fcb7",
+      storageBucket: "mynewshop-3fcb7.firebasestorage.app",
+      messagingSenderId: "914506490670",
+      appId: "1:914506490670:web:817b0339ee0c98fba690bf"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+    const alertBox = document.getElementById('alertBox');
+    let alertTimer = null;
+    function showAlert(message, type = 'error') {
+      if (alertTimer) clearTimeout(alertTimer);
+      alertBox.className = 'alert show ' + type;
+      alertBox.innerHTML = message;
+      if (type === 'error') alertTimer = setTimeout(() => alertBox.classList.remove('show'), 5000);
+    }
+    function hideAlert() { alertBox.classList.remove('show'); if (alertTimer) clearTimeout(alertTimer); }
+    const RATE_LIMIT_KEY = 'myshop_login_attempts';
+    const RATE_LIMIT_MAX = 5, RATE_LIMIT_WINDOW = 60 * 1000;
+    function getAttempts() {
+      try {
+        const data = JSON.parse(localStorage.getItem(RATE_LIMIT_KEY) || '{}');
+        const now = Date.now();
+        if (data.timestamp && now - data.timestamp > RATE_LIMIT_WINDOW) return { count: 0, timestamp: now };
+        return data;
+      } catch { return { count: 0, timestamp: Date.now() }; }
+    }
+    function incrementAttempts() {
+      const data = getAttempts(); data.count = (data.count || 0) + 1; data.timestamp = Date.now();
+      localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(data));
+    }
+    function clearAttempts() { localStorage.removeItem(RATE_LIMIT_KEY); }
+    function isRateLimited() {
+      const data = getAttempts();
+      return data.count >= RATE_LIMIT_MAX && (Date.now() - data.timestamp) < RATE_LIMIT_WINDOW;
+    }
+    function getRateLimitRemaining() {
+      const data = getAttempts();
+      const remaining = Math.ceil((RATE_LIMIT_WINDOW - (Date.now() - data.timestamp)) / 1000);
+      return remaining > 0 ? remaining : 0;
+    }
+    let isRedirecting = false;
+    auth.onAuthStateChanged((user) => {
+      if (user && !isRedirecting) {
+        isRedirecting = true;
+        showAlert('✅ ចូលបានជោគជ័យ! កំពុងបញ្ជូន...', 'success');
+        db.ref('admins/' + user.uid).once('value')
+          .then((snap) => { window.location.href = (snap.exists() && snap.val() === true) ? '/admin' : '/'; })
+          .catch((err) => { 
+            console.error('Error checking admin status:', err);
+            window.location.href = '/'; 
+          });
+      }
+    });
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideAlert();
+      if (isRateLimited()) { showAlert(`⏱️ ព្យាយាមច្រើនដងពេក! សូមរង់ចាំ ${getRateLimitRemaining()} វិនាទី`, 'error'); return; }
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const btn = document.getElementById('loginBtn');
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) { showAlert('❌ Email មិនត្រឹមត្រូវ', 'error'); return; }
+      if (!password) { showAlert('❌ សូមបញ្ចូល Password', 'error'); return; }
+      btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> កំពុង Login...';
+      try {
+        await auth.signInWithEmailAndPassword(email, password);
+        clearAttempts();
+      } catch (error) {
+        incrementAttempts();
+        const messages = {
+          'auth/user-not-found': 'គ្មានគណនីដែលប្រើ Email នេះទេ',
+          'auth/wrong-password': 'Password មិនត្រឹមត្រូវ',
+          'auth/invalid-email': 'Email មិនត្រឹមត្រូវ',
+          'auth/invalid-credential': 'Email ឬ Password មិនត្រឹមត្រូវ',
+          'auth/too-many-requests': 'ព្យាយាមច្រើនដងពេក សូមរង់ចាំបន្តិច',
+          'auth/network-request-failed': 'Network មានបញ្ហា',
+          'auth/user-disabled': 'គណនីនេះត្រូវបានបិទ'
+        };
+        let msg = messages[error.code] || 'Error: ' + error.message;
+        const attempts = getAttempts();
+        if (attempts.count >= 3) msg += `<br><small>⚠️ ព្យាយាម ${attempts.count}/${RATE_LIMIT_MAX} ដង</small>`;
+        showAlert('❌ ' + msg, 'error');
+        btn.disabled = false; btn.textContent = 'Login';
+      }
+    });
+    document.getElementById('togglePassword').addEventListener('click', () => {
+      const pwd = document.getElementById('password');
+      const btn = document.getElementById('togglePassword');
+      if (pwd.type === 'password') {
+        pwd.type = 'text';
+        btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+      } else {
+        pwd.type = 'password';
+        btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+      }
+    });
+    document.getElementById('forgotPassword').addEventListener('click', async (e) => {
+      e.preventDefault(); hideAlert();
+      const email = document.getElementById('email').value.trim();
+      if (!email) { showAlert('📧 សូមបញ្ចូល Email ជាមុន', 'info'); document.getElementById('email').focus(); return; }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) { showAlert('❌ Email មិនត្រឹមត្រូវ', 'error'); return; }
+      const link = e.target;
+      const originalText = link.textContent;
+      link.textContent = 'កំពុងផ្ញើ...'; link.style.pointerEvents = 'none';
+      try {
+        await auth.sendPasswordResetEmail(email);
+        showAlert('✅ បានផ្ញើ Link Reset Password ទៅ Email របស់អ្នក!', 'success');
+      } catch (error) {
+        const messages = { 'auth/user-not-found': 'គ្មានគណនីដែលប្រើ Email នេះទេ', 'auth/invalid-email': 'Email មិនត្រឹមត្រូវ', 'auth/too-many-requests': 'ព្យាយាមច្រើនដងពេក' };
+        showAlert('❌ ' + (messages[error.code] || error.message), 'error');
+      } finally { link.textContent = originalText; link.style.pointerEvents = 'auto'; }
+    });
+    window.addEventListener('load', () => { const emailInput = document.getElementById('email'); if (emailInput && window.innerWidth > 768) emailInput.focus(); });
+  </script>
+</body>
+</html>
