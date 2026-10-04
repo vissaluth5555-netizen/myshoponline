@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Backup & Restore - MYSHOP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Fredoka', 'Noto Sans Khmer', sans-serif; }
+    body { background: linear-gradient(135deg, #ff4d8d 0%, #9b4dff 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .container { background: white; border-radius: 24px; padding: 40px; max-width: 700px; width: 100%; box-shadow: 0 30px 80px rgba(0,0,0,0.3); }
+    
+    .header { text-align: center; margin-bottom: 30px; }
+    .header h1 { color: #9b4dff; font-size: 28px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .header p { color: #666; font-size: 14px; }
+    
+    .tabs { display: flex; gap: 8px; margin-bottom: 25px; background: #f8f5ff; padding: 6px; border-radius: 14px; }
+    .tab { flex: 1; padding: 12px; border: none; background: transparent; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.25s; color: #666; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; }
+    .tab.active { background: white; color: #9b4dff; box-shadow: 0 4px 12px rgba(155,77,255,0.15); }
+    
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    
+    .status { padding: 15px; border-radius: 12px; margin: 15px 0; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 10px; }
+    .status.info { background: #dbeafe; color: #2563eb; }
+    .status.success { background: #d1fae5; color: #059669; }
+    .status.error { background: #fee2e2; color: #dc2626; }
+    .status.warning { background: #fef3c7; color: #d97706; }
+    
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin: 20px 0; }
+    .stat { background: linear-gradient(135deg, #f8f5ff, #faf5ff); padding: 18px; border-radius: 14px; text-align: center; border: 1px solid #f3e8ff; transition: 0.2s; }
+    .stat:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(155,77,255,0.1); }
+    .stat-icon { font-size: 24px; margin-bottom: 8px; }
+    .stat-value { font-size: 24px; font-weight: 800; color: #9b4dff; }
+    .stat-label { font-size: 12px; color: #666; margin-top: 4px; font-weight: 600; }
+    
+    .btn { width: 100%; padding: 15px; border: none; border-radius: 14px; font-weight: 700; font-size: 15px; cursor: pointer; margin-bottom: 12px; transition: 0.25s; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; }
+    .btn-primary { background: linear-gradient(90deg, #ff4d8d, #9b4dff); color: white; }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(155,77,255,0.4); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-secondary { background: #f3e8ff; color: #9b4dff; }
+    .btn-secondary:hover:not(:disabled) { background: #e9d5ff; }
+    .btn-danger { background: #fee2e2; color: #dc2626; }
+    .btn-danger:hover:not(:disabled) { background: #fecaca; }
+    .btn-warning { background: #fef3c7; color: #d97706; }
+    .btn-warning:hover:not(:disabled) { background: #fde68a; }
+    
+    .log { background: #1a1625; color: #a7f3d0; padding: 18px; border-radius: 12px; font-family: 'Monaco', 'Courier New', monospace; font-size: 12px; max-height: 250px; overflow-y: auto; margin-top: 15px; white-space: pre-wrap; line-height: 1.6; }
+    .log::-webkit-scrollbar { width: 6px; }
+    .log::-webkit-scrollbar-thumb { background: #9b4dff; border-radius: 3px; }
+    
+    .upload-area { border: 2px dashed #c084fc; border-radius: 14px; padding: 40px 20px; text-align: center; cursor: pointer; transition: 0.25s; margin: 15px 0; background: #faf5ff; }
+    .upload-area:hover { border-color: #9b4dff; background: #f3e8ff; }
+    .upload-area.dragover { border-color: #9b4dff; background: #e9d5ff; }
+    .upload-area i { font-size: 40px; color: #9b4dff; margin-bottom: 12px; }
+    .upload-area p { font-size: 14px; color: #666; margin-bottom: 5px; }
+    .upload-area small { font-size: 12px; color: #999; }
+    
+    .info-box { background: #fef3c7; border: 1px solid #fbbf24; border-radius: 12px; padding: 14px; margin: 15px 0; font-size: 13px; color: #92400e; line-height: 1.6; }
+    .info-box strong { color: #78350f; }
+    
+    .warning-box { background: #fee2e2; border: 1px solid #f87171; border-radius: 12px; padding: 14px; margin: 15px 0; font-size: 13px; color: #991b1b; line-height: 1.6; }
+    
+    @media (max-width: 600px) {
+      .container { padding: 24px 20px; }
+      .header h1 { font-size: 22px; }
+      .tab { font-size: 12px; padding: 10px 6px; }
+      .stat-value { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fa-solid fa-database"></i> Backup & Restore</h1>
+      <p>គ្រប់គ្រង Database Backup របស់អ្នក</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('backup')">
+        <i class="fa-solid fa-download"></i> Backup
+      </button>
+      <button class="tab" onclick="switchTab('restore')">
+        <i class="fa-solid fa-upload"></i> Restore
+      </button>
+    </div>
+
+    <!-- BACKUP TAB -->
+    <div id="tab-backup" class="tab-content active">
+      <div id="status" class="status info">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <span>កំពុងពិនិត្យសិទ្ធិ Admin...</span>
+      </div>
+
+      <div class="stats" id="stats" style="display: none;">
+        <div class="stat">
+          <div class="stat-icon">📦</div>
+          <div class="stat-value" id="statProducts">0</div>
+          <div class="stat-label">Products</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon">🛒</div>
+          <div class="stat-value" id="statOrders">0</div>
+          <div class="stat-label">Orders</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon">👥</div>
+          <div class="stat-value" id="statUsers">0</div>
+          <div class="stat-label">Users</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon">🎟️</div>
+          <div class="stat-value" id="statDiscounts">0</div>
+          <div class="stat-label">Discounts</div>
+        </div>
+      </div>
+
+      <button id="backupBtn" class="btn btn-primary" onclick="downloadBackup()" disabled>
+        <i class="fa-solid fa-download"></i> Download Backup (JSON)
+      </button>
+
+      <button id="fullBackupBtn" class="btn btn-secondary" onclick="downloadFullBackup()" disabled>
+        <i class="fa-solid fa-box-archive"></i> Download Full Backup
+      </button>
+
+      <div class="info-box">
+        <strong>💡 ដំបូន្មាន៖</strong><br>
+        • Backup រៀងរាល់សប្តាហ៍<br>
+        • រក្សាទុក Backup ក្នុង Google Drive ឬ External Drive<br>
+        • កុំ Upload Backup ចូល GitHub
+      </div>
+
+      <div class="log" id="log">កំពុងរង់ចាំ...</div>
+    </div>
+
+    <!-- RESTORE TAB -->
+    <div id="tab-restore" class="tab-content">
+      <div id="restoreStatus" class="status info">
+        <i class="fa-solid fa-info-circle"></i>
+        <span>Upload Backup File ដើម្បី Restore</span>
+      </div>
+
+      <div class="warning-box">
+        <strong>⚠️ សេចក្តីព្រមាន!</strong><br>
+        ការ Restore នឹង <strong>សរសេរជាន់លើ</strong> Data ដែលមានស្រាប់ ។ សូម Backup ជាមុនសិន!
+      </div>
+
+      <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        <p>ចុចដើម្បីជ្រើសរើស ឬ Drag & Drop</p>
+        <small>គាំទ្រ .json (Backup File)</small>
+      </div>
+
+      <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="handleFileSelect(event)">
+
+      <div id="fileInfo" style="display: none; margin: 15px 0; padding: 12px; background: #f8f5ff; border-radius: 10px; font-size: 13px;">
+        <strong>📁 File:</strong> <span id="fileName">-</span><br>
+        <strong>📊 Size:</strong> <span id="fileSize">-</span><br>
+        <strong>📅 Backup Date:</strong> <span id="fileDate">-</span>
+      </div>
+
+      <div class="stats" id="restoreStats" style="display: none;">
+        <div class="stat">
+          <div class="stat-icon">📦</div>
+          <div class="stat-value" id="rProducts">0</div>
+          <div class="stat-label">Products</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon">🛒</div>
+          <div class="stat-value" id="rOrders">0</div>
+          <div class="stat-label">Orders</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon">👥</div>
+          <div class="stat-value" id="rUsers">0</div>
+          <div class="stat-label">Users</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon">🎟️</div>
+          <div class="stat-value" id="rDiscounts">0</div>
+          <div class="stat-label">Discounts</div>
+        </div>
+      </div>
+
+      <button id="restoreBtn" class="btn btn-warning" onclick="startRestore()" disabled>
+        <i class="fa-solid fa-upload"></i> Restore Database
+      </button>
+
+      <div class="log" id="restoreLog">កំពុងរង់ចាំ...</div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD5RLQZCt7c12zqwo4mn8AU5phbv6fmpLI",
+      authDomain: "mynewshop-3fcb7.firebaseapp.com",
+      databaseURL: "https://mynewshop-3fcb7-default-rtdb.firebaseio.com",
+      projectId: "mynewshop-3fcb7",
+      storageBucket: "mynewshop-3fcb7.firebasestorage.app",
+      messagingSenderId: "914506490670",
+      appId: "1:914506490670:web:817b0339ee0c98fba690bf"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    let selectedFile = null;
+    let parsedBackup = null;
+
+    // ═══════════════════════════════════════
+    // TAB SWITCHING
+    // ═══════════════════════════════════════
+    function switchTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      
+      if (tab === 'backup') {
+        document.querySelectorAll('.tab')[0].classList.add('active');
+        document.getElementById('tab-backup').classList.add('active');
+      } else {
+        document.querySelectorAll('.tab')[1].classList.add('active');
+        document.getElementById('tab-restore').classList.add('active');
+      }
+    }
+
+    // ═══════════════════════════════════════
+    // UTILITIES
+    // ═══════════════════════════════════════
+    function log(msg, target = 'log') {
+      const logEl = document.getElementById(target);
+      logEl.textContent += '\n[' + new Date().toLocaleTimeString() + '] ' + msg;
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function setStatus(msg, type, target = 'status') {
+      const el = document.getElementById(target);
+      const icons = {
+        info: 'fa-info-circle',
+        success: 'fa-check-circle',
+        error: 'fa-times-circle',
+        warning: 'fa-exclamation-triangle'
+      };
+      el.className = 'status ' + type;
+      el.innerHTML = `<i class="fa-solid ${icons[type]}"></i><span>${msg}</span>`;
+    }
+
+    // ═══════════════════════════════════════
+    // AUTH CHECK
+    // ═══════════════════════════════════════
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        setStatus('❌ សូម Login ជា Admin មុន!', 'error');
+        setTimeout(() => window.location.href = '/login', 2000);
+        return;
+      }
+
+      try {
+        const snap = await db.ref('admins/' + user.uid).once('value');
+        if (snap.val() !== true) {
+          setStatus('❌ អ្នកមិនមានសិទ្ធិ Admin!', 'error');
+          setTimeout(() => window.location.href = '/', 2000);
+          return;
+        }
+
+        setStatus('✅ Admin Verified! កំពុងរៀបចំ Backup...', 'success');
+        await loadStats();
+        document.getElementById('backupBtn').disabled = false;
+        document.getElementById('fullBackupBtn').disabled = false;
+        log('✅ System ready');
+      } catch (err) {
+        setStatus('❌ Error: ' + err.message, 'error');
+      }
+    });
+
+    async function loadStats() {
+      try {
+        const [products, orders, users, discounts] = await Promise.all([
+          db.ref('products').once('value'),
+          db.ref('orders').once('value'),
+          db.ref('users').once('value'),
+          db.ref('discountCodes').once('value')
+        ]);
+
+        document.getElementById('statProducts').textContent = Object.keys(products.val() || {}).length;
+        document.getElementById('statOrders').textContent = Object.keys(orders.val() || {}).length;
+        document.getElementById('statUsers').textContent = Object.keys(users.val() || {}).length;
+        document.getElementById('statDiscounts').textContent = Object.keys(discounts.val() || {}).length;
+
+        document.getElementById('stats').style.display = 'grid';
+        log('📊 Stats loaded');
+      } catch (err) {
+        log('❌ Stats error: ' + err.message);
+      }
+    }
+
+    // ═══════════════════════════════════════
+    // BACKUP
+    // ═══════════════════════════════════════
+    async function downloadBackup() {
+      const btn = document.getElementById('backupBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> កំពុង Backup...';
+      log('🚀 ចាប់ផ្តើម Backup...');
+
+      try {
+        const paths = ['products', 'orders', 'users', 'discountCodes', 'admins', 'auditLogs'];
+        const backup = {
+          metadata: {
+            timestamp: new Date().toISOString(),
+            version: '1.0',
+            project: 'mynewshop-3fcb7',
+            adminEmail: auth.currentUser.email,
+            adminUid: auth.currentUser.uid,
+            type: 'partial'
+          },
+          data: {}
+        };
+
+        for (const path of paths) {
+          try {
+            const snap = await db.ref(path).once('value');
+            const data = snap.val();
+            backup.data[path] = data;
+            const count = data ? Object.keys(data).length : 0;
+            log(`✅ ${path}: ${count} records`);
+          } catch (err) {
+            log(`⚠️ ${path}: ${err.message}`);
+            backup.data[path] = null;
+          }
+        }
+
+        const jsonString = JSON.stringify(backup, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const date = new Date().toISOString().split('T')[0];
+        const time = new Date().toTimeString().split(' ')[0].replace(/:/g, '-');
+        const filename = `myshop-backup-${date}-${time}.json`;
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        const size = (blob.size / 1024).toFixed(2);
+        log(`✅ Backup បានរួច! (${size} KB)`);
+        log(`📁 File: ${filename}`);
+        setStatus(`✅ Backup បានរួច! File ទំហំ ${size} KB`, 'success');
+      } catch (err) {
+        log('❌ Error: ' + err.message);
+        setStatus('❌ Backup បរាជ័យ: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-download"></i> Download Backup (JSON)';
+      }
+    }
+
+    async function downloadFullBackup() {
+      const btn = document.getElementById('fullBackupBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> កំពុង Full Backup...';
+      log('🚀 ចាប់ផ្តើម Full Backup...');
+
+      try {
+        const snap = await db.ref('/').once('value');
+        const fullData = snap.val();
+
+        const backup = {
+          metadata: {
+            timestamp: new Date().toISOString(),
+            type: 'full',
+            version: '1.0',
+            project: 'mynewshop-3fcb7',
+            adminEmail: auth.currentUser.email
+          },
+          data: fullData
+        };
+
+        const jsonString = JSON.stringify(backup, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const date = new Date().toISOString().split('T')[0];
+        const filename = `myshop-full-backup-${date}.json`;
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        const size = (blob.size / 1024).toFixed(2);
+        log(`✅ Full Backup បានរួច! (${size} KB)`);
+        setStatus(`✅ Full Backup បានរួច! File ទំហំ ${size} KB`, 'success');
+      } catch (err) {
+        log('❌ Error: ' + err.message);
+        setStatus('❌ Full Backup បរាជ័យ: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-box-archive"></i> Download Full Backup';
+      }
+    }
+
+    // ═══════════════════════════════════════
+    // RESTORE
+    // ═══════════════════════════════════════
+    const uploadArea = document.getElementById('uploadArea');
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('dragover');
+    });
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file && file.name.endsWith('.json')) {
+        processFile(file);
+      } else {
+        setStatus('❌ សូមជ្រើសរើស File .json', 'error', 'restoreStatus');
+      }
+    });
+
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (file) processFile(file);
+    }
+
+    function processFile(file) {
+      selectedFile = file;
+      log(`📁 File selected: ${file.name}`, 'restoreLog');
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          parsedBackup = JSON.parse(e.target.result);
+
+          if (!parsedBackup.data) {
+            throw new Error('Invalid backup file format');
+          }
+
+          const sizeKB = (file.size / 1024).toFixed(2);
+          document.getElementById('fileName').textContent = file.name;
+          document.getElementById('fileSize').textContent = sizeKB + ' KB';
+          document.getElementById('fileDate').textContent = parsedBackup.metadata?.timestamp || 'Unknown';
+          document.getElementById('fileInfo').style.display = 'block';
+
+          const data = parsedBackup.data;
+          document.getElementById('rProducts').textContent = data.products ? Object.keys(data.products).length : 0;
+          document.getElementById('rOrders').textContent = data.orders ? Object.keys(data.orders).length : 0;
+          document.getElementById('rUsers').textContent = data.users ? Object.keys(data.users).length : 0;
+          document.getElementById('rDiscounts').textContent = data.discountCodes ? Object.keys(data.discountCodes).length : 0;
+          document.getElementById('restoreStats').style.display = 'grid';
+
+          document.getElementById('restoreBtn').disabled = false;
+          setStatus('✅ File ត្រឹមត្រូវ! ចុច Restore ដើម្បីចាប់ផ្តើម', 'success', 'restoreStatus');
+        } catch (err) {
+          setStatus('❌ File មិនត្រឹមត្រូវ: ' + err.message, 'error', 'restoreStatus');
+          document.getElementById('restoreBtn').disabled = true;
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    async function startRestore() {
+      if (!parsedBackup || !parsedBackup.data) {
+        setStatus('❌ គ្មាន File', 'error', 'restoreStatus');
+        return;
+      }
+
+      const confirmMsg = `⚠️ ការ Restore នឹងសរសេរជាន់លើ Data ដែលមានស្រាប់!\n\n` +
+        `File: ${selectedFile.name}\n` +
+        `Date: ${parsedBackup.metadata?.timestamp || 'Unknown'}\n\n` +
+        `តើអ្នកប្រាកដឬទេ?`;
+
+      if (!confirm(confirmMsg)) return;
+
+      const btn = document.getElementById('restoreBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> កំពុង Restore...';
+      log('🚀 ចាប់ផ្តើម Restore...', 'restoreLog');
+      setStatus('⏳ កំពុង Restore...', 'info', 'restoreStatus');
+
+      try {
+        const data = parsedBackup.data;
+        const paths = Object.keys(data);
+
+        for (const path of paths) {
+          if (data[path] === null || data[path] === undefined) {
+            log(`⏭️ Skip ${path} (null)`, 'restoreLog');
+            continue;
+          }
+
+          log(`📝 Restoring ${path}...`, 'restoreLog');
+          await db.ref(path).set(data[path]);
+          const count = Object.keys(data[path]).length;
+          log(`✅ ${path}: ${count} records restored`, 'restoreLog');
+        }
+
+        log('✅ Restore បានរួច!', 'restoreLog');
+        setStatus('✅ Restore បានរួច! សូម Refresh ទំព័រ', 'success', 'restoreStatus');
+
+        setTimeout(() => {
+          if (confirm('✅ Restore បានរួច! តើអ្នកចង់ Refresh ទំព័រឥឡូវនេះទេ?')) {
+            window.location.reload();
+          }
+        }, 1000);
+
+      } catch (err) {
+        log('❌ Error: ' + err.message, 'restoreLog');
+        setStatus('❌ Restore បរាជ័យ: ' + err.message, 'error', 'restoreStatus');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-upload"></i> Restore Database';
+      }
+    }
+  </script>
+</body>
+</html>

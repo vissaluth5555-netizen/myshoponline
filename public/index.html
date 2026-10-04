@@ -2025,7 +2025,7 @@
         pickupSection.style.display = 'block';
       }
 
-      shippingFee = 2.00; // ⭐ គិតថ្លៃ $2 ទាំងពីរ
+      shippingFee = 2.00;
       updateCheckoutTotals();
     }
 
@@ -2350,10 +2350,15 @@
             }
           }
 
+          // ⭐ ហៅ /notify-order ជាមួយ ID Token
           try {
-            await fetch(`${WORKER_URL}/notify-order`, {
+            const notifyIdToken = await getIdToken();
+            const notifyRes = await fetch(`${WORKER_URL}/notify-order`, {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + notifyIdToken
+              },
               body: JSON.stringify({
                 orderId: pendingOrder.orderId,
                 username: currentUsername,
@@ -2377,6 +2382,8 @@
                 discountCode: pendingOrder.discountCode || null
               })
             });
+            const notifyData = await notifyRes.json();
+            console.log('📤 Notify response:', notifyData);
           } catch (err) {
             console.error('Telegram notify error:', err);
           }
