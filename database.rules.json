@@ -8,20 +8,19 @@
     },
 
     "users": {
-      ".read": "root.child('admins').child(auth.uid).val() === true",
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
       "$uid": {
         ".read": "auth != null && (auth.uid === $uid || root.child('admins').child(auth.uid).val() === true)",
         ".write": "auth != null && (auth.uid === $uid || root.child('admins').child(auth.uid).val() === true)",
         ".validate": "newData.hasChildren(['username', 'email'])",
         "balance": {
-          ".write": "root.child('admins').child(auth.uid).val() === true",
-          ".validate": "newData.isNumber() && newData.val() >= 0"
+          ".write": "root.child('admins').child(auth.uid).val() === true || (!data.exists() && newData.val() === 0)",
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000000"
         },
         "username": {
           ".validate": "newData.isString() && newData.val().length >= 3 && newData.val().length <= 20"
         },
         "email": {
-          ".write": "root.child('admins').child(auth.uid).val() === true",
           ".validate": "newData.isString() && newData.val().matches(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/)"
         },
         "createdAt": {
@@ -32,7 +31,7 @@
 
     "products": {
       ".read": true,
-      ".write": "root.child('admins').child(auth.uid).val() === true",
+      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
       "$productId": {
         ".validate": "newData.hasChildren(['name', 'price', 'stock'])",
         "name": {
@@ -60,10 +59,10 @@
     },
 
     "orders": {
-      ".read": "root.child('admins').child(auth.uid).val() === true",
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
       "$orderId": {
         ".read": "auth != null && (data.child('uid').val() === auth.uid || root.child('admins').child(auth.uid).val() === true)",
-        ".write": "auth != null && ((!data.exists() && newData.child('uid').val() === auth.uid && newData.child('status').val() === 'pending' && newData.hasChildren(['uid', 'items', 'total', 'status'])) || root.child('admins').child(auth.uid).val() === true)",
+        ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
         ".validate": "newData.hasChildren(['uid', 'items', 'total', 'status'])",
         "uid": {
           ".validate": "newData.isString()"
@@ -115,7 +114,7 @@
 
     "discountCodes": {
       ".read": "auth != null",
-      ".write": "root.child('admins').child(auth.uid).val() === true",
+      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
       "$codeId": {
         ".validate": "newData.hasChildren(['code', 'type', 'value', 'active'])",
         "code": {
@@ -134,10 +133,10 @@
     },
 
     "topups": {
-      ".read": "root.child('admins').child(auth.uid).val() === true",
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
       "$topupId": {
         ".read": "auth != null && (data.child('uid').val() === auth.uid || root.child('admins').child(auth.uid).val() === true)",
-        ".write": "auth != null && ((!data.exists() && newData.child('uid').val() === auth.uid && newData.child('status').val() === 'pending') || root.child('admins').child(auth.uid).val() === true)",
+        ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
         ".validate": "newData.hasChildren(['uid', 'amount', 'status'])",
         "uid": {
           ".validate": "newData.isString()"
@@ -149,6 +148,11 @@
           ".validate": "newData.val() === 'pending' || newData.val() === 'approved' || newData.val() === 'rejected'"
         }
       }
+    },
+
+    "auditLogs": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true"
     }
   }
 }

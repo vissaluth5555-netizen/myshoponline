@@ -120,6 +120,7 @@
       top: 0;
       z-index: 10000;
       box-shadow: 0 4px 20px rgba(155,77,255,0.3);
+      min-height: 70px;
     }
 
     .logo {
@@ -157,7 +158,7 @@
 
     .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
-    .theme-btn {
+    .theme-btn, .icon-btn {
       background: var(--btn-secondary-bg);
       border: 1px solid var(--btn-secondary-border);
       color: white;
@@ -170,10 +171,26 @@
       align-items: center;
       justify-content: center;
       transition: 0.25s;
+      position: relative;
     }
-    .theme-btn:hover {
+    .theme-btn:hover, .icon-btn:hover {
       background: rgba(255,255,255,0.28);
       transform: translateY(-1px);
+    }
+    .wishlist-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #ff4d8d;
+      color: white;
+      font-size: 12px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
     }
 
     .cart-btn {
@@ -297,6 +314,7 @@
       display: flex;
       flex-direction: column;
       backdrop-filter: blur(12px);
+      position: relative;
     }
     .product-card:hover {
       transform: translateY(-8px);
@@ -343,18 +361,40 @@
       cursor: pointer;
       transition: 0.25s;
     }
-    .add-cart-btn:hover {
-      box-shadow: 0 6px 20px rgba(155, 77, 255, 0.4);
-    }
+    .add-cart-btn:hover { box-shadow: 0 6px 20px rgba(155, 77, 255, 0.4); }
 
-    .add-cart-btn,
-    .modal-add-cart {
+    .heart-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #999;
+      transition: 0.25s;
+      z-index: 2;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    [data-theme="dark"] .heart-btn {
+      background: rgba(30, 27, 46, 0.9);
+      color: #666;
+    }
+    .heart-btn:hover { transform: scale(1.1); }
+    .heart-btn.active { color: #ff4d8d; }
+
+    .add-cart-btn, .modal-add-cart {
       position: relative;
       overflow: hidden;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .add-cart-btn::before,
-    .modal-add-cart::before {
+    .add-cart-btn::before, .modal-add-cart::before {
       content: '';
       position: absolute;
       top: 50%;
@@ -366,24 +406,18 @@
       transform: translate(-50%, -50%);
       transition: width 0.5s ease, height 0.5s ease;
     }
-    .add-cart-btn.clicked::before,
-    .modal-add-cart.clicked::before {
+    .add-cart-btn.clicked::before, .modal-add-cart.clicked::before {
       width: 300px;
       height: 300px;
     }
-    .add-cart-btn.success,
-    .modal-add-cart.success {
+    .add-cart-btn.success, .modal-add-cart.success {
       background: linear-gradient(90deg, #10b981, #34d399) !important;
       box-shadow: 0 8px 25px rgba(16, 185, 129, 0.45) !important;
       transform: scale(1.05);
     }
-    .add-cart-btn.success:hover,
-    .modal-add-cart.success:hover {
-      transform: scale(1.05);
-    }
     .out-of-stock { background: #64748b !important; cursor: not-allowed; }
 
-    .cart-overlay {
+    .cart-overlay, .wishlist-overlay, .order-history-overlay {
       position: fixed;
       inset: 0;
       background: var(--overlay);
@@ -392,14 +426,15 @@
       visibility: hidden;
       transition: 0.3s;
     }
-    .cart-overlay.show { opacity: 1; visibility: visible; }
+    .wishlist-overlay, .order-history-overlay { z-index: 32000; }
+    .cart-overlay.show, .wishlist-overlay.show, .order-history-overlay.show { opacity: 1; visibility: visible; }
 
-    .cart-sidebar {
+    .cart-sidebar, .wishlist-sidebar, .order-history-sidebar {
       position: fixed;
       top: 0;
       right: -100%;
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
       height: 100%;
       background: var(--sidebar-bg);
       z-index: 30010;
@@ -409,38 +444,61 @@
       color: var(--text);
       border-left: 1px solid var(--border);
     }
-    .cart-sidebar.open { right: 0; }
+    .wishlist-sidebar, .order-history-sidebar { z-index: 32010; }
+    .cart-sidebar.open, .wishlist-sidebar.open, .order-history-sidebar.open { right: 0; }
 
-    .cart-header {
+    .cart-header, .wishlist-header, .order-history-header {
       background: linear-gradient(90deg, #ff4d8d, #9b4dff);
       color: white;
-      padding: 18px 20px;
+      padding: 14px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 0 4px 20px rgba(155,77,255,0.3);
+      min-height: 70px;
     }
-    .close-cart {
+    .cart-header h2, .wishlist-header h2, .order-history-header h2 {
+      font-size: 20px;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .close-cart, .close-wishlist, .close-order-history {
       background: none;
       border: none;
       color: white;
       font-size: 28px;
       cursor: pointer;
+      line-height: 1;
+      transition: 0.25s;
     }
-    .cart-items { flex: 1; overflow-y: auto; padding: 20px; }
-    .cart-item {
+    .close-cart:hover, .close-wishlist:hover, .close-order-history:hover { transform: scale(1.15); }
+
+    .cart-items, .wishlist-items, .order-history-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      scrollbar-width: none;
+    }
+    .cart-items::-webkit-scrollbar, .wishlist-items::-webkit-scrollbar, .order-history-body::-webkit-scrollbar { display: none; }
+
+    .cart-item, .wishlist-item {
       display: flex;
       gap: 14px;
       margin-bottom: 18px;
       padding-bottom: 18px;
       border-bottom: 1px solid var(--border);
     }
-    .cart-item img {
+    .cart-item img, .wishlist-item img {
       width: 70px; height: 70px; object-fit: contain;
       background: var(--bg); border-radius: 10px;
     }
-    .cart-item-info { flex: 1; }
-    .cart-item-name { font-weight: 700; font-size: 14px; color: var(--text); }
-    .cart-item-price { color: var(--price); font-weight: 700; }
+    .cart-item-info, .wishlist-item-info { flex: 1; }
+    .cart-item-name, .wishlist-item-name { font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 4px; }
+    .cart-item-price, .wishlist-item-price { color: var(--price); font-weight: 700; }
     .qty-control { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
     .qty-btn {
       width: 28px; height: 28px; border-radius: 8px;
@@ -452,6 +510,26 @@
       color: #ef4444; background: none; border: none;
       font-size: 13px; cursor: pointer; margin-top: 6px;
     }
+    .wishlist-item-actions { display: flex; gap: 8px; margin-top: 8px; }
+    .wishlist-item-actions button {
+      padding: 7px 12px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .wishlist-add-btn {
+      background: linear-gradient(90deg, #ff4d8d, #9b4dff);
+      color: white;
+    }
+    .wishlist-remove-btn {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3) !important;
+    }
+
     .cart-footer { padding: 20px; border-top: 1px solid var(--border); }
     .cart-total {
       display: flex; justify-content: space-between;
@@ -464,8 +542,67 @@
       color: white; border: none; padding: 16px;
       border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer;
     }
-    .empty-cart { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+    .empty-cart, .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+    .empty-state i { font-size: 48px; margin-bottom: 16px; opacity: 0.4; display: block; }
 
+    /* ORDER HISTORY */
+    .order-card {
+      background: var(--section-bg);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+      border: 1px solid var(--section-border);
+      transition: 0.2s;
+    }
+    .order-card:hover {
+      border-color: rgba(155, 77, 255, 0.3);
+      box-shadow: 0 8px 20px rgba(155, 77, 255, 0.1);
+    }
+    .order-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--section-border);
+    }
+    .order-card-id { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+    .order-card-date { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+    .order-status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .order-status-badge.pending { background: #fef3c7; color: #d97706; }
+    .order-status-badge.paid { background: #d1fae5; color: #059669; }
+    .order-status-badge.failed, .order-status-badge.cancelled { background: #fee2e2; color: #dc2626; }
+    [data-theme="dark"] .order-status-badge.pending { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    [data-theme="dark"] .order-status-badge.paid { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+    [data-theme="dark"] .order-status-badge.failed, [data-theme="dark"] .order-status-badge.cancelled { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+
+    .order-items-list { margin-bottom: 12px; }
+    .order-item-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .order-card-footer {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px solid var(--section-border);
+      font-weight: 800;
+      color: var(--price);
+      font-size: 16px;
+    }
+
+    /* CART PAGE 2 */
     .cart-page2-overlay {
       position: fixed;
       inset: 0;
@@ -476,18 +613,14 @@
       transition: 0.25s ease;
       pointer-events: none;
     }
-    .cart-page2-overlay.show {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-    }
+    .cart-page2-overlay.show { opacity: 1; visibility: visible; pointer-events: auto; }
 
     .cart-page2 {
       position: fixed;
       top: 0;
       right: -100%;
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
       height: 100%;
       background: var(--sidebar-bg);
       z-index: 40010;
@@ -502,40 +635,21 @@
     .cart-page2-header {
       background: linear-gradient(90deg, #ff4d8d, #9b4dff);
       color: white;
-      padding: 18px 20px;
+      padding: 14px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-shrink: 0;
+      box-shadow: 0 4px 20px rgba(155,77,255,0.3);
+      min-height: 70px;
     }
-    .cart-page2-header h2 {
-      font-size: 20px;
-      font-weight: 700;
-      margin: 0;
-    }
-    .close-cart-page2 {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 28px;
-      cursor: pointer;
-      line-height: 1;
-    }
+    .cart-page2-header h2 { font-size: 20px; font-weight: 800; margin: 0; letter-spacing: 0.5px; }
+    .close-cart-page2 { background: none; border: none; color: white; font-size: 28px; cursor: pointer; line-height: 1; transition: 0.25s; }
+    .close-cart-page2:hover { transform: scale(1.15); }
 
-    .cart-page2-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-      scrollbar-width: none;
-    }
+    .cart-page2-body { flex: 1; overflow-y: auto; padding: 16px; scrollbar-width: none; }
     .cart-page2-body::-webkit-scrollbar { display: none; }
-
-    .cart-page2-footer {
-      padding: 16px 20px 22px;
-      border-top: 1px solid var(--border);
-      background: var(--sidebar-bg);
-      flex-shrink: 0;
-    }
+    .cart-page2-footer { padding: 16px 20px 22px; border-top: 1px solid var(--border); background: var(--sidebar-bg); flex-shrink: 0; }
 
     .checkout-section {
       background: var(--section-bg);
@@ -570,6 +684,24 @@
     .form-group input:focus, .form-group textarea:focus {
       border-color: #9b4dff;
       box-shadow: 0 0 0 3px rgba(155,77,255,0.15);
+    }
+
+    .pickup-info-box {
+      margin-top: 12px;
+      padding: 12px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 10px;
+      font-size: 13px;
+      color: #059669;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.5;
+    }
+    [data-theme="dark"] .pickup-info-box {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
     }
 
     .delivery-options { display: flex; gap: 10px; margin-bottom: 14px; }
@@ -612,38 +744,15 @@
       margin-top: 10px;
       transition: all 0.25s;
     }
-    .gps-btn:hover {
-      background: linear-gradient(135deg, #ede9fe, #ddd6fe);
-      transform: translateY(-1px);
-    }
-    .gps-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    .gps-btn.success {
-      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-      color: #059669;
-      border-color: #10b981;
-      border-style: solid;
-    }
-    [data-theme="dark"] .gps-btn {
-      background: rgba(155, 77, 255, 0.15);
-      border-color: rgba(192, 132, 252, 0.4);
-      color: #c084fc;
-    }
-    [data-theme="dark"] .gps-btn.success {
-      background: rgba(16, 185, 129, 0.15);
-      border-color: rgba(16, 185, 129, 0.5);
-      color: #6ee7b7;
-    }
+    .gps-btn:hover { background: linear-gradient(135deg, #ede9fe, #ddd6fe); transform: translateY(-1px); }
+    .gps-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .gps-btn.success { background: linear-gradient(135deg, #d1fae5, #a7f3d0); color: #059669; border-color: #10b981; border-style: solid; }
+    [data-theme="dark"] .gps-btn { background: rgba(155, 77, 255, 0.15); border-color: rgba(192, 132, 252, 0.4); color: #c084fc; }
+    [data-theme="dark"] .gps-btn.success { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.5); color: #6ee7b7; }
 
     .gps-result { font-size: 12px; color: #22c55e; margin-top: 8px; text-align: center; min-height: 18px; font-weight: 500; }
 
-    .discount-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
+    .discount-row { display: flex; gap: 10px; align-items: center; }
     .discount-row input {
       flex: 1;
       padding: 12px 14px;
@@ -666,29 +775,9 @@
       white-space: nowrap;
     }
 
-    .order-summary-item {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      margin-bottom: 6px;
-      color: var(--text-muted);
-    }
-
-    .checkout-summary {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 5px;
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-    .checkout-total {
-      display: flex;
-      justify-content: space-between;
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--price);
-      margin: 10px 0 14px;
-    }
+    .order-summary-item { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; color: var(--text-muted); }
+    .checkout-summary { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 13px; color: var(--text-muted); }
+    .checkout-total { display: flex; justify-content: space-between; font-size: 18px; font-weight: 800; color: var(--price); margin: 10px 0 14px; }
     .continue-btn {
       width: 100%;
       padding: 14px;
@@ -701,6 +790,7 @@
       cursor: pointer;
     }
 
+    /* MODALS */
     .modal {
       position: fixed;
       inset: 0;
@@ -715,13 +805,8 @@
       overflow: hidden;
       animation: modalBgFade 0.3s ease;
     }
-
     .modal.hidden { display: none; }
-
-    @keyframes modalBgFade {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+    @keyframes modalBgFade { from { opacity: 0; } to { opacity: 1; } }
 
     .modal-card {
       position: relative;
@@ -737,29 +822,18 @@
       box-shadow: var(--payment-shadow);
       animation: modalCardIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
     .modal-card::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; left: 0; right: 0;
       height: 3px;
       background: linear-gradient(90deg, #ff4d8d, #9b4dff, #ff4d8d);
       background-size: 200% 100%;
       animation: gradientMove 3s linear infinite;
       z-index: 10;
     }
-
-    @keyframes gradientMove {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 200% 50%; }
-    }
-
-    @keyframes modalCardIn {
-      from { opacity: 0; transform: scale(0.9) translateY(20px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
+    @keyframes gradientMove { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+    @keyframes modalCardIn { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
     .modal-header {
       position: relative;
@@ -769,23 +843,16 @@
       text-align: center;
       overflow: hidden;
     }
-
     .modal-header::before {
       content: '';
       position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
       background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
       animation: shimmerRotate 6s linear infinite;
       pointer-events: none;
     }
-
-    @keyframes shimmerRotate {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    @keyframes shimmerRotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     .modal-header h2 {
       position: relative;
@@ -801,28 +868,9 @@
       gap: 8px;
       color: white;
     }
+    .modal-body { padding: 16px 8px 22px; overflow: hidden; }
 
-    .modal-body {
-      padding: 16px 8px 22px;
-      overflow: hidden;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-
-    .modal-body::-webkit-scrollbar {
-      display: none;
-      width: 0;
-      height: 0;
-    }
-
-    .qr-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-    }
-
-    /* ⭐ QR Image - បង្ហាញដោយផ្ទាល់ */
+    .qr-box { display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%; max-width: 300px; margin: 0 auto; }
     .qr-box img {
       width: 100%;
       max-width: 280px;
@@ -835,18 +883,7 @@
       margin: 0 auto;
       box-shadow: 0 8px 30px rgba(0,0,0,0.15);
     }
-
-    .qr-box p {
-      font-size: 12.5px;
-      color: var(--payment-text-muted);
-      text-align: center;
-      line-height: 1.5;
-      padding: 0 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
+    .qr-box p { font-size: 12.5px; color: var(--payment-text-muted); text-align: center; line-height: 1.5; padding: 0 10px; }
 
     .checking-status {
       display: flex;
@@ -870,96 +907,30 @@
       flex-shrink: 0;
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .checking-text {
-      font-size: 14px;
-      font-weight: 600;
-      color: #9b4dff;
-      letter-spacing: 0.3px;
-      animation: pulseText 1.6s ease-in-out infinite;
-    }
+    .checking-text { font-size: 14px; font-weight: 600; color: #9b4dff; letter-spacing: 0.3px; animation: pulseText 1.6s ease-in-out infinite; }
     @keyframes pulseText { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+    [data-theme="dark"] .checking-status { background: rgba(155, 77, 255, 0.15); border-color: rgba(155, 77, 255, 0.35); }
+    [data-theme="dark"] .checking-spinner { border-color: rgba(167, 139, 250, 0.3); border-top-color: #a78bfa; }
+    [data-theme="dark"] .checking-text { color: #a78bfa; }
 
-    [data-theme="dark"] .checking-status {
-      background: rgba(155, 77, 255, 0.15);
-      border-color: rgba(155, 77, 255, 0.35);
-    }
-    [data-theme="dark"] .checking-spinner {
-      border-color: rgba(167, 139, 250, 0.3);
-      border-top-color: #a78bfa;
-    }
-    [data-theme="dark"] .checking-text {
-      color: #a78bfa;
-    }
-
-    .checking-status.success {
-      background: rgba(16, 185, 129, 0.12);
-      border-color: rgba(16, 185, 129, 0.4);
-    }
-    .checking-status.success .checking-spinner {
-      border-color: rgba(16, 185, 129, 0.3);
-      border-top-color: #10b981;
-    }
+    .checking-status.success { background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.4); }
+    .checking-status.success .checking-spinner { border-color: rgba(16, 185, 129, 0.3); border-top-color: #10b981; }
     .checking-status.success .checking-text { color: #059669; }
-    [data-theme="dark"] .checking-status.success .checking-text { color: #6ee7b7; }
 
-    .checking-status.failed {
-      background: rgba(239, 68, 68, 0.12);
-      border-color: rgba(239, 68, 68, 0.4);
-    }
-    .checking-status.failed .checking-spinner {
-      border-color: rgba(239, 68, 68, 0.3);
-      border-top-color: #ef4444;
-    }
+    .checking-status.failed { background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.4); }
+    .checking-status.failed .checking-spinner { border-color: rgba(239, 68, 68, 0.3); border-top-color: #ef4444; }
     .checking-status.failed .checking-text { color: #dc2626; }
-    [data-theme="dark"] .checking-status.failed .checking-text { color: #fca5a5; }
 
-    .status-text {
-      text-align: center;
-      margin-top: 14px;
-      font-weight: 600;
-      font-size: 13.5px;
-      min-height: 20px;
-      letter-spacing: 0.3px;
-      color: var(--payment-text-muted);
-    }
+    .status-text { text-align: center; margin-top: 14px; font-weight: 600; font-size: 13.5px; min-height: 20px; color: var(--payment-text-muted); }
 
-    .receipt-card {
-      background: var(--sidebar-bg);
-      border-radius: 20px;
-      width: 100%;
-      max-width: 400px;
-      overflow: hidden;
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .receipt-header {
-      background: linear-gradient(90deg, #ff4d8d, #9b4dff);
-      color: white;
-      padding: 25px;
-      text-align: center;
-    }
+    .receipt-card { background: var(--sidebar-bg); border-radius: 20px; width: 100%; max-width: 400px; overflow: hidden; color: var(--text); border: 1px solid var(--border); }
+    .receipt-header { background: linear-gradient(90deg, #ff4d8d, #9b4dff); color: white; padding: 25px; text-align: center; }
     .receipt-body { padding: 25px; }
     .receipt-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; }
-    .receipt-total {
-      background: var(--section-bg);
-      padding: 14px;
-      border-radius: 12px;
-      display: flex;
-      justify-content: space-between;
-      font-weight: 800;
-      color: var(--price);
-      margin-top: 15px;
-    }
-    .receipt-close {
-      width: 100%;
-      background: linear-gradient(90deg, #ff4d8d, #9b4dff);
-      color: white;
-      border: none;
-      padding: 14px;
-      font-weight: 700;
-      cursor: pointer;
-    }
+    .receipt-total { background: var(--section-bg); padding: 14px; border-radius: 12px; display: flex; justify-content: space-between; font-weight: 800; color: var(--price); margin-top: 15px; }
+    .receipt-close { width: 100%; background: linear-gradient(90deg, #ff4d8d, #9b4dff); color: white; border: none; padding: 14px; font-weight: 700; cursor: pointer; }
 
+    /* PRODUCT MODAL */
     .product-modal {
       position: fixed !important; top: 58px !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
       background: var(--overlay) !important; display: flex !important;
@@ -973,108 +944,61 @@
       overflow-y: auto !important; display: flex !important; flex-direction: column !important;
       color: var(--text);
     }
-    .product-modal-header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 16px 30px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--sidebar-bg); z-index: 10;
-    }
+    .product-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 30px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--sidebar-bg); z-index: 10; }
     .product-modal-header h3 { font-size: 20px; color: #9b4dff; font-weight: 700; margin: 0; }
     .product-modal-close { background: none; border: none; font-size: 28px; cursor: pointer; color: var(--text-muted); line-height: 1; }
-    .product-modal-body {
-      display: flex; gap: 50px; padding: 30px 40px; flex: 1; max-width: 1400px; margin: 0 auto; width: 100%;
-    }
-    .product-modal-img-wrap {
-      width: 420px; height: 420px; background: var(--bg); border-radius: 20px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-    }
+    .product-modal-body { display: flex; gap: 50px; padding: 30px 40px; flex: 1; max-width: 1400px; margin: 0 auto; width: 100%; }
+    .product-modal-img-wrap { width: 420px; height: 420px; background: var(--bg); border-radius: 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
     .product-modal-img { max-width: 90%; max-height: 90%; object-fit: contain; }
     .product-modal-info { flex: 1; display: flex; flex-direction: column; padding-top: 10px; }
     .product-modal-category { font-size: 15px; color: #9b4dff; font-weight: 600; margin-bottom: 8px; }
-    .product-modal-name { font-size: 32px; font-weight: 800; margin-bottom: 14px; line-height: 1.2; color: var(--text); }
+    .product-modal-name { font-size: 32px; font-weight: 800; margin-bottom: 14px; line-height: 1.2; }
     .product-modal-price { font-size: 32px; font-weight: 800; color: var(--price); margin-bottom: 16px; }
     .product-modal-stock { font-size: 15px; margin-bottom: 16px; color: var(--text-muted); }
     .product-modal-desc { font-size: 16px; color: var(--text-muted); line-height: 1.6; margin-bottom: 30px; flex: 1; }
+    .product-modal-actions { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 16px; margin-top: auto; width: 100%; padding-bottom: 10px; }
+    .qty-selector { display: flex; align-items: center; gap: 14px; background: var(--section-bg); padding: 8px 16px; border-radius: 50px; border: 1.5px solid var(--border); flex-shrink: 0; }
+    .qty-selector button { width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--input-bg); color: var(--text); font-weight: 700; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .qty-selector button:hover { background: linear-gradient(90deg, #ff4d8d, #9b4dff); color: white; }
+    .qty-selector span { font-weight: 700; min-width: 28px; text-align: center; font-size: 17px; }
+    .modal-add-cart { flex: 1; max-width: 220px; background: linear-gradient(90deg, #ff4d8d, #9b4dff); color: white; border: none; padding: 14px 20px; border-radius: 50px; font-weight: 700; font-size: 15px; cursor: pointer; white-space: nowrap; }
+    .modal-add-cart:disabled { background: #64748b; cursor: not-allowed; }
 
-    .product-modal-actions {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      margin-top: auto;
-      width: 100%;
-      padding-bottom: 10px;
-    }
-    .qty-selector {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      background: var(--section-bg);
-      padding: 8px 16px;
-      border-radius: 50px;
-      border: 1.5px solid var(--border);
-      flex-shrink: 0;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    }
-    .qty-selector button {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: none;
-      background: var(--input-bg);
-      color: var(--text);
-      font-weight: 700;
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
-    .qty-selector button:hover {
-      background: linear-gradient(90deg, #ff4d8d, #9b4dff);
-      color: white;
-      transform: scale(1.08);
-    }
-    .qty-selector span {
-      font-weight: 700;
-      min-width: 28px;
-      text-align: center;
-      font-size: 17px;
-      color: var(--text);
-    }
-    .modal-add-cart {
-      flex: 1;
-      max-width: 220px;
-      background: linear-gradient(90deg, #ff4d8d, #9b4dff);
-      color: white;
-      border: none;
-      padding: 14px 20px;
-      border-radius: 50px;
-      font-weight: 700;
-      font-size: 15px;
-      cursor: pointer;
-      transition: 0.25s;
-      box-shadow: 0 8px 25px rgba(155, 77, 255, 0.35);
-      white-space: nowrap;
-    }
-    .modal-add-cart:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 30px rgba(155, 77, 255, 0.45);
-    }
-    .modal-add-cart:disabled {
-      background: #64748b;
-      box-shadow: none;
-      cursor: not-allowed;
-      transform: none;
-    }
+    /* CUSTOM ALERT */
+    .custom-alert-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(12px); z-index: 100000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+    .custom-alert-overlay.show { opacity: 1; visibility: visible; }
+    .custom-alert { position: relative; background: var(--payment-bg); border-radius: 24px; width: 100%; max-width: 380px; padding: 0; overflow: hidden; color: var(--payment-text); border: 1px solid var(--payment-border); box-shadow: 0 30px 80px rgba(0,0,0,0.3), 0 0 60px rgba(155,77,255,0.2); transform: scale(0.85) translateY(20px); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .custom-alert-overlay.show .custom-alert { transform: scale(1) translateY(0); }
+    .custom-alert::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #ff4d8d, #9b4dff, #ff4d8d); background-size: 200% 100%; animation: gradientMove 3s linear infinite; z-index: 10; }
+    .custom-alert.success::before { background: linear-gradient(90deg, #10b981, #34d399, #10b981); background-size: 200% 100%; }
+    .custom-alert.error::before { background: linear-gradient(90deg, #ef4444, #f87171, #ef4444); background-size: 200% 100%; }
+    .custom-alert.warning::before { background: linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b); background-size: 200% 100%; }
+    .custom-alert.info::before { background: linear-gradient(90deg, #3b82f6, #60a5fa, #3b82f6); background-size: 200% 100%; }
+    .custom-alert-header { position: relative; padding: 28px 24px 20px; text-align: center; overflow: hidden; }
+    .custom-alert-icon { position: relative; width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 36px; color: white; font-weight: 700; animation: iconPulse 0.6s ease-out; }
+    @keyframes iconPulse { 0% { transform: scale(0); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+    .custom-alert.success .custom-alert-icon { background: linear-gradient(135deg, #10b981, #34d399); }
+    .custom-alert.error .custom-alert-icon { background: linear-gradient(135deg, #ef4444, #f87171); }
+    .custom-alert.warning .custom-alert-icon { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+    .custom-alert.info .custom-alert-icon { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+    .custom-alert-title { font-size: 20px; font-weight: 800; margin-bottom: 8px; color: var(--payment-text); }
+    .custom-alert-body { padding: 0 24px 20px; text-align: center; }
+    .custom-alert-message { font-size: 14.5px; line-height: 1.6; color: var(--payment-text-muted); font-weight: 500; word-break: break-word; }
+    .custom-alert-footer { padding: 0 24px 24px; }
+    .custom-alert-btn { width: 100%; padding: 14px 20px; border-radius: 14px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; color: white; background: linear-gradient(90deg, #ff4d8d, #9b4dff); }
+    .custom-alert-btn:hover { transform: translateY(-2px); }
+    .custom-alert.success .custom-alert-btn { background: linear-gradient(90deg, #10b981, #34d399); }
+    .custom-alert.error .custom-alert-btn { background: linear-gradient(90deg, #ef4444, #f87171); }
+    .custom-alert.warning .custom-alert-btn { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .custom-alert.info .custom-alert-btn { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
 
     @media (max-width: 900px) {
-      .header { padding: 10px 14px; }
+      .header { padding: 10px 14px; min-height: 60px; }
+      .cart-header, .wishlist-header, .order-history-header, .cart-page2-header { padding: 10px 14px; min-height: 60px; }
+      .cart-header h2, .wishlist-header h2, .order-history-header h2, .cart-page2-header h2 { font-size: 18px; }
       .logo { font-size: 20px; }
       .cart-btn, .logout-btn { padding: 8px 12px; font-size: 13px; }
-      .theme-btn { width: 38px; height: 38px; }
-
+      .theme-btn, .icon-btn { width: 38px; height: 38px; }
       .products-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
       .product-img { height: 150px; padding: 10px; }
       .product-info { padding: 12px; }
@@ -1082,74 +1006,33 @@
       .product-desc { font-size: 12px; -webkit-line-clamp: 2; }
       .product-price { font-size: 15px; }
       .add-cart-btn { padding: 8px 10px; font-size: 12px; }
-
-      .cart-sidebar, .cart-page2 { max-width: 100%; }
-
+      .cart-sidebar, .cart-page2, .wishlist-sidebar, .order-history-sidebar { max-width: 100%; }
       .product-modal { top: 52px !important; }
       .product-modal-body { flex-direction: column; padding: 16px; gap: 16px; }
       .product-modal-img-wrap { width: 100%; height: 260px; }
       .product-modal-name { font-size: 22px; }
       .product-modal-price { font-size: 24px; }
-      .product-modal-actions { flex-direction: row; gap: 12px; justify-content: center; }
-      .modal-add-cart { max-width: 200px; }
     }
 
     @media (max-width: 600px) {
-      .header { padding: 10px 12px; gap: 8px; }
+      .header { padding: 10px 12px; gap: 8px; min-height: 56px; }
+      .cart-header, .wishlist-header, .order-history-header, .cart-page2-header { padding: 10px 12px; min-height: 56px; }
+      .cart-header h2, .wishlist-header h2, .order-history-header h2, .cart-page2-header h2 { font-size: 16px; }
       .header-right { gap: 6px; }
-      .logo { font-size: 18px; letter-spacing: 0.5px; }
+      .logo { font-size: 18px; }
       .cart-btn span:not(.cart-count), .logout-btn span { display: none; }
       .cart-btn, .logout-btn { padding: 9px 11px; }
-
       .search-wrapper { margin-top: 14px; padding: 0 12px; }
       .search-box { padding: 10px 14px; }
-
       .categories { padding: 14px 12px; gap: 8px; }
       .cat-btn { padding: 8px 14px; font-size: 13px; }
-
       .container { padding: 0 12px 30px; }
       .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
       .product-img { height: 130px; }
       .product-name { font-size: 13px; }
       .product-price { font-size: 14px; }
       .add-cart-btn { padding: 7px 8px; font-size: 11px; }
-
-      .product-modal-img-wrap { height: 220px; }
-      .product-modal-name { font-size: 20px; }
-      .product-modal-price { font-size: 22px; }
-      .product-modal-header { padding: 12px 16px; }
-      .product-modal-actions { gap: 10px; }
-      .modal-add-cart { max-width: 180px; padding: 13px 16px; font-size: 14px; }
-
-      .modal { padding: 12px; align-items: center; }
-      .modal-card { max-width: 100%; max-height: calc(100vh - 24px); border-radius: 24px; }
-      .modal-header { padding: 18px 20px; }
-      .modal-header h2 { font-size: 16px; }
-      .modal-body { padding: 14px 6px 20px; }
-      .qr-box img { max-width: 220px; padding: 5px; }
-    }
-
-    @media (max-width: 380px) {
-      .products-grid { gap: 10px; }
-      .product-img { height: 115px; }
-      .product-info { padding: 10px; }
-      .product-name { font-size: 12px; }
-      .product-desc { display: none; }
-      .add-cart-btn { font-size: 10px; padding: 6px 6px; }
-      .logo { font-size: 16px; }
-      .product-modal-actions { gap: 8px; }
-      .modal-add-cart { max-width: 160px; font-size: 13px; padding: 12px 14px; }
-
-      .modal-card { border-radius: 20px; }
-      .modal-header h2 { font-size: 15px; }
-      .qr-box img { max-width: 200px; padding: 4px; }
-    }
-
-
-    @media (max-height: 700px) {
-      .modal { align-items: center; padding: 12px; }
-      .modal-card { max-height: calc(100vh - 24px); }
-      .modal-body { padding: 14px 6px 18px; }
+      .heart-btn { width: 30px; height: 30px; font-size: 13px; top: 8px; right: 8px; }
     }
   </style>
 </head>
@@ -1162,6 +1045,13 @@
     <div class="header-right">
       <button class="theme-btn" id="themeToggle" title="Toggle Dark/Light Mode">
         <i class="fa-solid fa-moon" id="themeIcon"></i>
+      </button>
+      <button class="icon-btn" onclick="openOrderHistory()" title="Order History">
+        <i class="fa-solid fa-receipt"></i>
+      </button>
+      <button class="icon-btn" onclick="openWishlist()" title="Wishlist">
+        <i class="fa-solid fa-heart"></i>
+        <span class="wishlist-count" id="wishlistCount">0</span>
       </button>
       <button class="cart-btn" onclick="openCart()">
         <i class="fa-solid fa-cart-shopping"></i> Cart
@@ -1186,6 +1076,7 @@
     <div class="products-grid" id="productsGrid"></div>
   </div>
 
+  <!-- CART SIDEBAR -->
   <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
   <div class="cart-sidebar" id="cartSidebar">
     <div class="cart-header">
@@ -1202,6 +1093,27 @@
     </div>
   </div>
 
+  <!-- WISHLIST SIDEBAR -->
+  <div class="wishlist-overlay" id="wishlistOverlay" onclick="closeWishlist()"></div>
+  <div class="wishlist-sidebar" id="wishlistSidebar">
+    <div class="wishlist-header">
+      <h2><i class="fa-solid fa-heart"></i> Wishlist</h2>
+      <button class="close-wishlist" onclick="closeWishlist()">×</button>
+    </div>
+    <div class="wishlist-items" id="wishlistItems"></div>
+  </div>
+
+  <!-- ORDER HISTORY SIDEBAR -->
+  <div class="order-history-overlay" id="orderHistoryOverlay" onclick="closeOrderHistory()"></div>
+  <div class="order-history-sidebar" id="orderHistorySidebar">
+    <div class="order-history-header">
+      <h2><i class="fa-solid fa-receipt"></i> Order History</h2>
+      <button class="close-order-history" onclick="closeOrderHistory()">×</button>
+    </div>
+    <div class="order-history-body" id="orderHistoryBody"></div>
+  </div>
+
+  <!-- CART PAGE 2 -->
   <div class="cart-page2-overlay" id="cartPage2Overlay" onclick="closeCartPage2()"></div>
   <div class="cart-page2" id="cartPage2">
     <div class="cart-page2-header">
@@ -1256,6 +1168,21 @@
         <div class="gps-result" id="gpsResult"></div>
       </div>
 
+      <div class="checkout-section" id="pickupSection" style="display:none;">
+        <h3><i class="fa-solid fa-store"></i> អាសយដ្ឋានទៅយក</h3>
+        <div class="form-group">
+          <label>ឈ្មោះខេត្ត</label>
+          <input type="text" id="pickupProvince" placeholder="បញ្ចូលឈ្មោះខេត្ត" value="ភ្នំពេញ">
+        </div>
+        <div class="form-group">
+          <label>ទីតាំងហាង Virakbuntam</label>
+          <input type="text" id="pickupAddress" placeholder="បញ្ចូលទីតាំងហាង" value="Virakbuntam Shop, ផ្លូវ 271, សង្កាត់ទួលគោក, ខណ្ឌទួលគោក, ភ្នំពេញ">
+        </div>
+        <div class="pickup-info-box">
+          ✅ សូមមកយកទំនិញនៅទីតាំងខាងលើ បន្ទាប់ពីបង់ប្រាក់រួច
+        </div>
+      </div>
+
       <div class="checkout-section">
         <h3><i class="fa-solid fa-note-sticky"></i> កំណត់ចំណាំ</h3>
         <div class="form-group">
@@ -1295,6 +1222,7 @@
     </div>
   </div>
 
+  <!-- PAYMENT MODAL -->
   <div id="paymentModal" class="modal hidden">
     <div class="modal-card">
       <div class="modal-header">
@@ -1309,21 +1237,18 @@
       <div class="modal-body">
         <div class="qr-box">
           <img id="qrImage" src="" alt="KHQR">
-          <p style="margin-top:12px;font-size:12.5px;color:var(--payment-text-muted);text-align:center;">
-            ស្កេន QR ដោយ ABA Mobile ឬ Bakong
-          </p>
-
+          <p>ស្កេន QR ដោយ ABA Mobile ឬ Bakong</p>
           <div class="checking-status" id="checkingStatus">
             <div class="checking-spinner" id="checkingSpinner"></div>
-            <div class="checking-text" id="checkingText">កំពុងរង់ចាំការទុទាត់...</div>
+            <div class="checking-text" id="checkingText">កំពុងរង់ចាំការទូទាត់...</div>
           </div>
-
           <div class="status-text" id="paymentStatus"></div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- RECEIPT MODAL -->
   <div id="receiptModal" class="modal hidden">
     <div class="receipt-card">
       <div class="receipt-header">
@@ -1347,6 +1272,7 @@
     </div>
   </div>
 
+  <!-- PRODUCT MODAL -->
   <div class="product-modal" id="productModal">
     <div class="product-modal-card">
       <div class="product-modal-header">
@@ -1376,10 +1302,96 @@
     </div>
   </div>
 
+  <!-- CUSTOM ALERT -->
+  <div class="custom-alert-overlay" id="customAlert">
+    <div class="custom-alert" id="customAlertBox">
+      <div class="custom-alert-header">
+        <div class="custom-alert-icon" id="customAlertIcon">✓</div>
+        <div class="custom-alert-title" id="customAlertTitle">Success</div>
+      </div>
+      <div class="custom-alert-body">
+        <div class="custom-alert-message" id="customAlertMessage"></div>
+      </div>
+      <div class="custom-alert-footer">
+        <button class="custom-alert-btn" id="customAlertBtn" onclick="closeCustomAlert()">OK</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
   <script>
+    // ==========================================
+    // CUSTOM ALERT SYSTEM
+    // ==========================================
+    let customAlertResolve = null;
+
+    function showCustomAlert(message, type = 'info', title = null) {
+      return new Promise((resolve) => {
+        const overlay = document.getElementById('customAlert');
+        const box = document.getElementById('customAlertBox');
+        const icon = document.getElementById('customAlertIcon');
+        const titleEl = document.getElementById('customAlertTitle');
+        const messageEl = document.getElementById('customAlertMessage');
+        const btn = document.getElementById('customAlertBtn');
+
+        const config = {
+          success: { icon: '✓', title: title || 'Success', btnText: 'Great!' },
+          error: { icon: '✕', title: title || 'Error', btnText: 'OK' },
+          warning: { icon: '!', title: title || 'Warning', btnText: 'OK' },
+          info: { icon: 'i', title: title || 'Info', btnText: 'Got it' }
+        };
+        const cfg = config[type] || config.info;
+        icon.textContent = cfg.icon;
+        titleEl.textContent = cfg.title;
+        messageEl.textContent = message;
+        btn.textContent = cfg.btnText;
+        box.className = 'custom-alert ' + type;
+        overlay.classList.add('show');
+        customAlertResolve = resolve;
+        setTimeout(() => btn.focus(), 100);
+      });
+    }
+
+    function closeCustomAlert() {
+      const overlay = document.getElementById('customAlert');
+      overlay.classList.remove('show');
+      if (customAlertResolve) { customAlertResolve(); customAlertResolve = null; }
+    }
+
+    window.alert = function(message) {
+      let type = 'info';
+      let cleanMessage = String(message);
+      if (cleanMessage.includes('✅') || cleanMessage.includes('✓')) {
+        type = 'success';
+        cleanMessage = cleanMessage.replace(/[✅✓]/g, '').trim();
+      } else if (cleanMessage.includes('❌') || cleanMessage.includes('✕')) {
+        type = 'error';
+        cleanMessage = cleanMessage.replace(/[❌✕]/g, '').trim();
+      } else if (cleanMessage.includes('⚠️') || cleanMessage.includes('⚠')) {
+        type = 'warning';
+        cleanMessage = cleanMessage.replace(/[⚠️⚠]/g, '').trim();
+      } else if (cleanMessage.includes('📧') || cleanMessage.includes('⏱')) {
+        type = 'info';
+        cleanMessage = cleanMessage.replace(/[📧⏱️⏱]/g, '').trim();
+      } else if (cleanMessage.includes('❤️')) {
+        type = 'success';
+        cleanMessage = cleanMessage.replace(/❤️/g, '').trim();
+      } else if (cleanMessage.includes('💔')) {
+        type = 'info';
+        cleanMessage = cleanMessage.replace(/💔/g, '').trim();
+      }
+      showCustomAlert(cleanMessage, type);
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeCustomAlert();
+    });
+
+    // ==========================================
+    // MAIN SHOP CODE
+    // ==========================================
     const WORKER_URL = "https://wild-flower-04c0.ing88138.workers.dev";
 
     const firebaseConfig = {
@@ -1406,6 +1418,12 @@
         .replace(/'/g, '&#039;');
     }
 
+    async function getIdToken() {
+      if (!currentUser) return null;
+      try { return await currentUser.getIdToken(true); }
+      catch (err) { console.error('Error getting ID token:', err); return null; }
+    }
+
     const themeToggle = document.getElementById('themeToggle');
     const themeIcon = document.getElementById('themeIcon');
 
@@ -1427,6 +1445,7 @@
     let currentUsername = "";
     let products = [];
     let cart = JSON.parse(localStorage.getItem('myshop_cart') || '[]');
+    let wishlist = JSON.parse(localStorage.getItem('myshop_wishlist') || '[]');
     let currentCategory = 'all';
     let searchQuery = '';
     let currentPaymentId = null;
@@ -1453,6 +1472,7 @@
       currentUser = user;
       loadUserData();
       loadProducts();
+      loadWishlistFromFirebase();
     });
 
     function loadUserData() {
@@ -1523,9 +1543,14 @@
         return;
       }
 
-      grid.innerHTML = list.map(p => `
+      grid.innerHTML = list.map(p => {
+        const isWishlisted = wishlist.includes(p.id);
+        return `
         <div class="product-card">
-          <img src="${escapeHtml(p.image || 'https://via.placeholder.com/300x200?text=Product')}" class="product-img" alt="${escapeHtml(p.name)}" onclick="openProductModal('${escapeHtml(p.id)}')">
+          <button class="heart-btn ${isWishlisted ? 'active' : ''}" onclick="event.stopPropagation(); toggleWishlist('${escapeHtml(p.id)}')" title="Wishlist">
+            <i class="fa-${isWishlisted ? 'solid' : 'regular'} fa-heart"></i>
+          </button>
+          <img src="${escapeHtml(p.image || 'https://via.placeholder.com/300x200?text=Product')}" class="product-img" alt="${escapeHtml(p.name)}" loading="lazy" onclick="openProductModal('${escapeHtml(p.id)}')">
           <div class="product-info">
             <div class="product-category">${escapeHtml(p.category || '')}</div>
             <div class="product-name" onclick="openProductModal('${escapeHtml(p.id)}')">${escapeHtml(p.name)}</div>
@@ -1537,10 +1562,205 @@
               </button>
             </div>
           </div>
+        </div>`;
+      }).join('');
+    }
+
+    // ==========================================
+    // WISHLIST SYSTEM
+    // ==========================================
+    async function loadWishlistFromFirebase() {
+      if (!currentUser) return;
+      try {
+        const snap = await db.ref('users/' + currentUser.uid + '/wishlist').once('value');
+        const data = snap.val() || {};
+        wishlist = Object.keys(data).filter(k => data[k] === true);
+        localStorage.setItem('myshop_wishlist', JSON.stringify(wishlist));
+        updateWishlistUI();
+        renderProducts();
+      } catch (err) {
+        console.error('Load wishlist error:', err);
+      }
+    }
+
+    async function toggleWishlist(productId) {
+      if (!currentUser) return;
+      const idx = wishlist.indexOf(productId);
+      const isNowIn = idx === -1;
+
+      if (isNowIn) { wishlist.push(productId); }
+      else { wishlist.splice(idx, 1); }
+
+      localStorage.setItem('myshop_wishlist', JSON.stringify(wishlist));
+      updateWishlistUI();
+      renderProducts();
+
+      try {
+        await db.ref('users/' + currentUser.uid + '/wishlist/' + productId).set(isNowIn ? true : null);
+      } catch (err) {
+        console.error('Save wishlist error:', err);
+      }
+
+      showCustomAlert(
+        isNowIn ? '❤️ បានបន្ថែមទៅបញ្ជីចង់បាន!' : '💔 បានដកចេញពីបញ្ជីចង់បាន',
+        isNowIn ? 'success' : 'info'
+      );
+    }
+
+    function updateWishlistUI() {
+      const countEl = document.getElementById('wishlistCount');
+      if (countEl) countEl.textContent = wishlist.length;
+    }
+
+    function openWishlist() {
+      renderWishlist();
+      document.getElementById('wishlistOverlay').classList.add('show');
+      document.getElementById('wishlistSidebar').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeWishlist() {
+      document.getElementById('wishlistOverlay').classList.remove('show');
+      document.getElementById('wishlistSidebar').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function renderWishlist() {
+      const container = document.getElementById('wishlistItems');
+      const items = products.filter(p => wishlist.includes(p.id));
+
+      if (items.length === 0) {
+        container.innerHTML = `<div class="empty-state"><i class="fa-regular fa-heart"></i>បញ្ជីចង់បានទទេ</div>`;
+        return;
+      }
+
+      container.innerHTML = items.map(p => `
+        <div class="wishlist-item">
+          <img src="${escapeHtml(p.image || 'https://via.placeholder.com/70')}" alt="">
+          <div class="wishlist-item-info">
+            <div class="wishlist-item-name">${escapeHtml(p.name)}</div>
+            <div class="wishlist-item-price">$${parseFloat(p.price || 0).toFixed(2)}</div>
+            <div class="wishlist-item-actions">
+              <button class="wishlist-add-btn" onclick="addFromWishlist('${escapeHtml(p.id)}')">
+                <i class="fa-solid fa-cart-plus"></i> Add to Cart
+              </button>
+              <button class="wishlist-remove-btn" onclick="toggleWishlist('${escapeHtml(p.id)}')">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </div>
         </div>
       `).join('');
     }
 
+    function addFromWishlist(productId) {
+      const product = products.find(p => p.id === productId);
+      if (!product || product.stock <= 0) {
+        return alert('⚠️ ស្តុកមិនគ្រប់គ្រាន់!');
+      }
+      const existing = cart.find(item => item.id === productId);
+      if (existing) {
+        if (existing.qty >= product.stock) return alert('⚠️ ស្តុកមិនគ្រប់គ្រាន់!');
+        existing.qty++;
+      } else {
+        cart.push({
+          id: product.id,
+          name: product.name,
+          price: parseFloat(product.price),
+          image: product.image,
+          qty: 1
+        });
+      }
+      saveCart();
+      updateCartUI();
+      alert('✅ បានបន្ថែមទៅកន្ត្រក!');
+    }
+
+    // ==========================================
+    // ORDER HISTORY
+    // ==========================================
+    async function openOrderHistory() {
+      document.getElementById('orderHistoryOverlay').classList.add('show');
+      document.getElementById('orderHistorySidebar').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      await loadOrderHistory();
+    }
+
+    function closeOrderHistory() {
+      document.getElementById('orderHistoryOverlay').classList.remove('show');
+      document.getElementById('orderHistorySidebar').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    async function loadOrderHistory() {
+      const container = document.getElementById('orderHistoryBody');
+      container.innerHTML = `<div class="empty-state"><div class="checking-spinner" style="margin: 0 auto 16px;"></div>កំពុងផ្ទុក...</div>`;
+
+      try {
+        const myOrdersSnap = await db.ref('users/' + currentUser.uid + '/myOrders').once('value');
+        const myOrders = myOrdersSnap.val() || {};
+        const orderIds = Object.keys(myOrders);
+
+        if (orderIds.length === 0) {
+          container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-receipt"></i>មិនមានការបញ្ជាទិញទេ</div>`;
+          return;
+        }
+
+        const orderPromises = orderIds.map(id =>
+          db.ref('orders/' + id).once('value').then(snap => ({ id, data: snap.val() }))
+        );
+        const results = await Promise.all(orderPromises);
+
+        const orders = results
+          .filter(r => r.data)
+          .sort((a, b) => (b.data.createdAt || 0) - (a.data.createdAt || 0));
+
+        container.innerHTML = orders.map(o => renderOrderCard(o.id, o.data)).join('');
+
+      } catch (err) {
+        console.error('Load order history error:', err);
+        container.innerHTML = `<div class="empty-state">មិនអាចផ្ទុកប្រវត្តិបានទេ</div>`;
+      }
+    }
+
+    function renderOrderCard(orderId, order) {
+      const date = order.createdAt ? new Date(order.createdAt).toLocaleString('en-GB') : '-';
+      const status = (order.status || 'pending').toLowerCase();
+      const statusLabel = {
+        'pending': 'កំពុងរង់ចាំ',
+        'paid': 'បានបង់ប្រាក់',
+        'failed': 'បរាជ័យ',
+        'cancelled': 'បានបោះបង់'
+      }[status] || status;
+
+      const items = order.items || [];
+      const itemsHtml = items.map(i => `
+        <div class="order-item-row">
+          <span>${escapeHtml(i.name)} × ${i.qty}</span>
+          <span>$${(Number(i.price) * Number(i.qty)).toFixed(2)}</span>
+        </div>
+      `).join('');
+
+      return `
+        <div class="order-card">
+          <div class="order-card-header">
+            <div>
+              <div class="order-card-id">#${escapeHtml(orderId.substring(0, 12))}...</div>
+              <div class="order-card-date">${escapeHtml(date)}</div>
+            </div>
+            <span class="order-status-badge ${status}">${escapeHtml(statusLabel)}</span>
+          </div>
+          <div class="order-items-list">${itemsHtml}</div>
+          <div class="order-card-footer">
+            <span>សរុប</span>
+            <span>$${parseFloat(order.total || 0).toFixed(2)}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // ==========================================
+    // PRODUCT MODAL
+    // ==========================================
     function openProductModal(productId) {
       closeCartPage2();
       const product = products.find(p => p.id === productId);
@@ -1576,7 +1796,6 @@
       if (!currentModalProduct) return;
       const maxStock = parseInt(currentModalProduct.stock) || 0;
       if (maxStock <= 0) return;
-
       modalQty += delta;
       if (modalQty < 1) modalQty = 1;
       if (modalQty > maxStock) modalQty = maxStock;
@@ -1585,12 +1804,9 @@
 
     function addFromModal() {
       if (!currentModalProduct || currentModalProduct.stock <= 0) return;
-
       const existing = cart.find(item => item.id === currentModalProduct.id);
       if (existing) {
-        if (existing.qty + modalQty > currentModalProduct.stock) {
-          return alert('ស្តុកមិនគ្រប់គ្រាន់!');
-        }
+        if (existing.qty + modalQty > currentModalProduct.stock) return alert('⚠️ ស្តុកមិនគ្រប់គ្រាន់!');
         existing.qty += modalQty;
       } else {
         cart.push({
@@ -1601,10 +1817,8 @@
           qty: modalQty
         });
       }
-
       saveCart();
       updateCartUI();
-
       const btn = document.getElementById('modalAddBtn');
       btn.classList.add('clicked');
       setTimeout(() => {
@@ -1624,13 +1838,15 @@
       if (e.target === this) closeProductModal();
     });
 
+    // ==========================================
+    // CART SYSTEM
+    // ==========================================
     function addToCart(productId, event) {
       const product = products.find(p => p.id === productId);
       if (!product || product.stock <= 0) return;
-
       const existing = cart.find(item => item.id === productId);
       if (existing) {
-        if (existing.qty >= product.stock) return alert('ស្តុកមិនគ្រប់គ្រាន់!');
+        if (existing.qty >= product.stock) return alert('⚠️ ស្តុកមិនគ្រប់គ្រាន់!');
         existing.qty++;
       } else {
         cart.push({
@@ -1641,10 +1857,8 @@
           qty: 1
         });
       }
-
       saveCart();
       updateCartUI();
-
       const btn = event ? event.target.closest('.add-cart-btn') : null;
       if (btn) {
         btn.classList.add('clicked');
@@ -1684,14 +1898,12 @@
       const count = cart.reduce((sum, i) => sum + i.qty, 0);
       document.getElementById('cartCount').textContent = count;
       const container = document.getElementById('cartItems');
-
       if (cart.length === 0) {
         container.innerHTML = `<div class="empty-cart">Your cart is empty</div>`;
         document.getElementById('cartTotal').textContent = '$0.00';
         document.getElementById('checkoutBtn').disabled = true;
         return;
       }
-
       document.getElementById('checkoutBtn').disabled = false;
       let total = 0;
       container.innerHTML = cart.map(item => {
@@ -1756,6 +1968,7 @@
       document.getElementById('btnHome').classList.add('active');
       document.getElementById('btnPickup').classList.remove('active');
       document.getElementById('addressSection').style.display = 'block';
+      document.getElementById('pickupSection').style.display = 'none';
       document.getElementById('discountRow').style.display = 'none';
 
       document.getElementById('page2OrderSummary').innerHTML = cart.map(item => `
@@ -1800,13 +2013,19 @@
       deliveryType = type;
       document.getElementById('btnHome').classList.toggle('active', type === 'home');
       document.getElementById('btnPickup').classList.toggle('active', type === 'pickup');
+
+      const addressSection = document.getElementById('addressSection');
+      const pickupSection = document.getElementById('pickupSection');
+
       if (type === 'home') {
-        document.getElementById('addressSection').style.display = 'block';
-        shippingFee = 2.00;
+        addressSection.style.display = 'block';
+        pickupSection.style.display = 'none';
       } else {
-        document.getElementById('addressSection').style.display = 'none';
-        shippingFee = 0;
+        addressSection.style.display = 'none';
+        pickupSection.style.display = 'block';
       }
+
+      shippingFee = 2.00; // ⭐ គិតថ្លៃ $2 ទាំងពីរ
       updateCheckoutTotals();
     }
 
@@ -1826,33 +2045,23 @@
 
     async function applyDiscount() {
       const code = document.getElementById('discountCode').value.trim().toUpperCase();
-
-      if (!code) {
-        discountAmount = 0;
-        updateCheckoutTotals();
-        return;
-      }
+      if (!code) { discountAmount = 0; updateCheckoutTotals(); return; }
 
       try {
-        const snap = await db.ref('discountCodes').once('value');
+        const snap = await db.ref('discountCodes').orderByChild('code').equalTo(code).once('value');
         const codes = snap.val() || {};
-
         let found = null;
         Object.keys(codes).forEach(key => {
-          if (codes[key].code === code && codes[key].active !== false) {
-            found = codes[key];
-          }
+          if (codes[key].active !== false) { found = codes[key]; }
         });
 
         if (found) {
           const subtotal = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
-
           if (found.type === 'percent') {
             discountAmount = (subtotal * found.value) / 100;
           } else {
             discountAmount = parseFloat(found.value) || 0;
           }
-
           discountAmount = Math.min(discountAmount, subtotal);
           alert(`✅ ប្រើលេខកូដជោគជ័យ! បញ្ចុះ $${discountAmount.toFixed(2)}`);
         } else {
@@ -1861,16 +2070,14 @@
         }
       } catch (err) {
         discountAmount = 0;
-        alert('Error: ' + err.message);
+        alert('❌ Error: ' + err.message);
       }
-
       updateCheckoutTotals();
     }
 
     function getCurrentLocation() {
       const result = document.getElementById('gpsResult');
       const btn = document.getElementById('gpsBtn');
-
       result.textContent = 'កំពុងស្វែងរកទីតាំង...';
       result.style.color = '#f59e0b';
       btn.disabled = true;
@@ -1912,105 +2119,141 @@
 
       const name = document.getElementById('checkoutName').value.trim();
       const phone = document.getElementById('checkoutPhone').value.trim();
-      if (!name) { alert('សូមបញ្ចូលឈ្មោះពេញ'); isSubmittingOrder = false; return; }
-      if (!phone) { alert('សូមបញ្ចូលលេខទូរស័ព្ទ'); isSubmittingOrder = false; return; }
+
+      if (!name) { alert('⚠️ សូមបញ្ចូលឈ្មោះពេញ'); isSubmittingOrder = false; return; }
+      if (!phone) { alert('⚠️ សូមបញ្ចូលលេខទូរស័ព្ទ'); isSubmittingOrder = false; return; }
+
       if (deliveryType === 'home') {
         const street = document.getElementById('checkoutStreet').value.trim();
         const city = document.getElementById('checkoutCity').value.trim();
-        if (!street || !city) { alert('សូមបញ្ចូលអាសយដ្ឋានឲ្យបានគ្រប់'); isSubmittingOrder = false; return; }
+        if (!street || !city) {
+          alert('⚠️ សូមបញ្ចូលអាសយដ្ឋានឲ្យបានគ្រប់');
+          isSubmittingOrder = false;
+          return;
+        }
+      } else {
+        const pickupProvince = document.getElementById('pickupProvince').value.trim();
+        const pickupAddress = document.getElementById('pickupAddress').value.trim();
+        if (!pickupProvince) { alert('⚠️ សូមបញ្ចូលឈ្មោះខេត្ត'); isSubmittingOrder = false; return; }
+        if (!pickupAddress) { alert('⚠️ សូមបញ្ចូលទីតាំងហាង Virakbuntam'); isSubmittingOrder = false; return; }
       }
 
-      const subtotal = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
-      const total = Math.max(0, subtotal + shippingFee - discountAmount);
+      const discountCode = document.getElementById('discountCode').value.trim().toUpperCase();
 
-      let orderId = null;
       try {
-        const orderRef = await db.ref('orders').push({
-          uid: currentUser.uid,
-          username: currentUsername,
-          email: currentUser.email,
+        const idToken = await getIdToken();
+        if (!idToken) { alert('❌ សូម Login មុន'); isSubmittingOrder = false; return; }
+
+        let streetValue = '';
+        let cityValue = '';
+        if (deliveryType === 'home') {
+          streetValue = document.getElementById('checkoutStreet').value.trim();
+          cityValue = document.getElementById('checkoutCity').value.trim();
+        } else {
+          streetValue = document.getElementById('pickupAddress').value.trim();
+          cityValue = document.getElementById('pickupProvince').value.trim();
+        }
+
+        const orderRes = await fetch(`${WORKER_URL}/create-order`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + idToken
+          },
+          body: JSON.stringify({
+            items: cart.map(i => ({ id: i.id, qty: i.qty })),
+            customerName: name,
+            phone: phone,
+            deliveryType: deliveryType,
+            street: streetValue,
+            city: cityValue,
+            notes: document.getElementById('checkoutNotes').value.trim(),
+            lat: userLat,
+            lng: userLng,
+            discountCode: discountCode || null
+          })
+        });
+
+        if (!orderRes.ok) {
+          const errorText = await orderRes.text();
+          console.error('Create order error:', errorText);
+          throw new Error('មិនអាចបង្កើត Order បានទេ');
+        }
+
+        const orderData = await orderRes.json();
+        if (!orderData.success) {
+          throw new Error(orderData.error || 'មិនអាចបង្កើត Order បានទេ');
+        }
+
+        const orderId = orderData.orderId;
+        const total = orderData.total;
+        const actualShippingFee = orderData.shippingFee;
+        const actualDiscount = orderData.discount || 0;
+
+        pendingOrder = {
+          orderId: orderId,
+          items: [...cart],
+          total: total,
           customerName: name,
           phone: phone,
           deliveryType: deliveryType,
-          street: document.getElementById('checkoutStreet').value.trim(),
-          city: document.getElementById('checkoutCity').value.trim(),
+          street: streetValue,
+          city: cityValue,
           notes: document.getElementById('checkoutNotes').value.trim(),
-          shippingFee: shippingFee,
-          discount: discountAmount,
+          shippingFee: actualShippingFee,
+          discount: actualDiscount,
+          discountCode: orderData.discountCode || null,
           lat: userLat,
-          lng: userLng,
-          items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty, image: i.image || '' })),
-          subtotal: subtotal,
-          total: total,
-          status: 'pending',
-          paymentId: null,
-          createdAt: firebase.database.ServerValue.TIMESTAMP
-        });
-        orderId = orderRef.key;
-      } catch (err) {
-        alert('Error creating order: ' + err.message);
-        isSubmittingOrder = false;
-        return;
-      }
+          lng: userLng
+        };
 
-      pendingOrder = {
-        orderId: orderId,
-        items: [...cart],
-        total: total,
-        customerName: name,
-        phone: phone,
-        deliveryType: deliveryType,
-        street: document.getElementById('checkoutStreet').value.trim(),
-        city: document.getElementById('checkoutCity').value.trim(),
-        notes: document.getElementById('checkoutNotes').value.trim(),
-        shippingFee: shippingFee,
-        discount: discountAmount,
-        lat: userLat,
-        lng: userLng
-      };
+        if (total <= 0) {
+          closeCartPage2();
+          await completeFreeOrder();
+          isSubmittingOrder = false;
+          return;
+        }
 
-      if (total <= 0) {
         closeCartPage2();
-        await completeFreeOrder();
-        isSubmittingOrder = false;
-        return;
-      }
 
-      closeCartPage2();
-
-      try {
         const res = await fetch(`${WORKER_URL}/create-payment`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             orderId: orderId,
             amount: total,
-            shippingFee: shippingFee,
-            discount: discountAmount,
+            shippingFee: actualShippingFee,
+            discount: actualDiscount,
             note: orderId,
             items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty }))
           })
         });
 
-        // ⭐ ពិនិត្យ Response ជាមុន
         if (!res.ok) {
           const errorText = await res.text();
           console.error('API Error Response:', errorText);
           throw new Error('API បរាជ័យ (Status: ' + res.status + ')');
         }
 
-        // ⭐ Parse JSON ដោយសុវត្ថិភាព
         let data;
         const text = await res.text();
         try {
           data = text ? JSON.parse(text) : {};
         } catch (e) {
           console.error('Invalid JSON response:', text);
-          throw new Error('API ត្រឡប់ទិន្នន័យមិនត្រឹមត្រូវ (មិនមែន JSON)');
+          throw new Error('API ត្រឡប់ទិន្នន័យមិនត្រឹមត្រូវ');
         }
 
         if (!data.id) throw new Error('API មិនបានផ្តល់ Payment ID មកវិញ');
         if (!data.qr_image && !data.qr_link) throw new Error('API មិនបានផ្តល់រូបភាព QR មកវិញ');
+
+        const validatedTotal = data.validated_total || total;
+        if (Math.abs(validatedTotal - total) > 0.01) {
+          alert('⚠️ តម្លៃមិនត្រូវគ្នា! សូម Refresh ទំព័រហើយព្យាយាមម្តងទៀត។');
+          closeCartPage2();
+          isSubmittingOrder = false;
+          return;
+        }
 
         currentPaymentId = data.id;
         document.getElementById('qrImage').src = data.qr_image || data.qr_link;
@@ -2020,7 +2263,7 @@
 
       } catch (err) {
         console.error('Payment error:', err);
-        alert('Error: ' + err.message);
+        alert('❌ Error: ' + err.message);
       } finally {
         isSubmittingOrder = false;
       }
@@ -2059,6 +2302,7 @@
 
     async function autoCheckPayment() {
       if (!currentPaymentId || !pendingOrder) return;
+      if (isProcessingPayment) return;
 
       const statusEl = document.getElementById('checkingStatus');
       const textEl = document.getElementById('checkingText');
@@ -2066,20 +2310,15 @@
 
       try {
         const res = await fetch(`${WORKER_URL}/check-status?id=${currentPaymentId}`);
-
-        // ⭐ ពិនិត្យ Response ជាមុន
         if (!res.ok) {
           console.error('Check status failed:', res.status);
           textEl.textContent = 'កំពុងរង់ចាំការទូទាត់...';
           return;
         }
 
-        // ⭐ Parse JSON ដោយសុវត្ថិភាព
         const text = await res.text();
         let data = {};
-        try {
-          data = text ? JSON.parse(text) : {};
-        } catch (e) {
+        try { data = text ? JSON.parse(text) : {}; } catch (e) {
           console.error('Invalid JSON:', text);
           return;
         }
@@ -2087,16 +2326,28 @@
         if (data.status === 'paid' || data.status === 'approved') {
           isProcessingPayment = true;
           stopAutoCheck();
-
           statusEl.className = 'checking-status success';
           textEl.textContent = '✅ ការទូទាត់ជោគជ័យ!';
 
           if (pendingOrder.orderId) {
-            await db.ref('orders/' + pendingOrder.orderId).update({
-              status: 'paid',
-              paymentId: currentPaymentId,
-              paidAt: Date.now()
-            });
+            try {
+              const idToken = await getIdToken();
+              if (idToken) {
+                await fetch(`${WORKER_URL}/confirm-payment`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + idToken
+                  },
+                  body: JSON.stringify({
+                    orderId: pendingOrder.orderId,
+                    paymentId: currentPaymentId
+                  })
+                });
+              }
+            } catch (err) {
+              console.error('Confirm payment error:', err);
+            }
           }
 
           try {
@@ -2104,11 +2355,13 @@
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
+                orderId: pendingOrder.orderId,
                 username: currentUsername,
                 email: currentUser.email,
                 items: pendingOrder.items.map(item => ({
                   name: item.name, price: item.price, qty: item.qty, image: item.image || ''
                 })),
+                subtotal: pendingOrder.items.reduce((sum, i) => sum + (i.price * i.qty), 0),
                 total: pendingOrder.total,
                 paymentId: currentPaymentId,
                 deliveryType: pendingOrder.deliveryType,
@@ -2120,7 +2373,8 @@
                 lat: pendingOrder.lat,
                 lng: pendingOrder.lng,
                 shippingFee: pendingOrder.shippingFee,
-                discount: pendingOrder.discount
+                discount: pendingOrder.discount,
+                discountCode: pendingOrder.discountCode || null
               })
             });
           } catch (err) {
@@ -2129,7 +2383,6 @@
 
           const savedItems = [...pendingOrder.items];
           const savedTotal = pendingOrder.total;
-
           pendingOrder = null;
           currentPaymentId = null;
 
@@ -2151,30 +2404,37 @@
         }
       } catch (err) {
         console.error('Auto check error:', err);
-        textEl.textContent = 'កំពុងរង់ចាំការទុទាត់...';
+        textEl.textContent = 'កំពុងរង់ចាំការទូទាត់...';
       }
     }
 
     async function completeFreeOrder() {
       try {
         if (pendingOrder.orderId) {
-          await db.ref('orders/' + pendingOrder.orderId).update({
-            status: 'paid',
-            paymentId: 'FREE_' + Date.now(),
-            paidAt: Date.now()
-          });
+          const idToken = await getIdToken();
+          if (idToken) {
+            await fetch(`${WORKER_URL}/confirm-payment`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + idToken
+              },
+              body: JSON.stringify({
+                orderId: pendingOrder.orderId,
+                paymentId: 'FREE_' + Date.now()
+              })
+            });
+          }
         }
-
         const savedItems = [...pendingOrder.items];
         pendingOrder = null;
-
         showReceipt(savedItems, 0);
         cart = [];
         saveCart();
         updateCartUI();
         localStorage.removeItem('myshop_checkout_form');
       } catch (err) {
-        alert('Error: ' + err.message);
+        alert('❌ Error: ' + err.message);
       }
     }
 
@@ -2202,7 +2462,7 @@
     });
 
     updateCartUI();
+    updateWishlistUI();
   </script>
 </body>
 </html>
-<!-- test -->

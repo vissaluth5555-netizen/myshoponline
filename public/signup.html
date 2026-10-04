@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com wss://*.firebaseio.com;">
   <title>Signup - MYSHOP</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -223,11 +224,14 @@
             username: username, email: email, balance: 0,
             createdAt: firebase.database.ServerValue.TIMESTAMP
           });
-          user.sendEmailVerification().catch(() => {});
+          user.sendEmailVerification().catch((emailErr) => {
+            console.warn('Email verification failed:', emailErr);
+          });
           showAlert('✅ បង្កើតគណនីជោគជ័យ!<br><small>កំពុងបញ្ជូនទៅ Login...</small>', 'success');
           setTimeout(() => { window.location.href = '/login'; }, 1500);
         } catch (dbErr) {
-          try { await user.delete(); } catch (delErr) {}
+          console.error('Database error:', dbErr);
+          try { await user.delete(); } catch (delErr) { console.error('Delete user error:', delErr); }
           throw new Error('មិនអាចរក្សាទុកព័ត៌មានក្នុង Database បានទេ');
         }
       } catch (error) {
