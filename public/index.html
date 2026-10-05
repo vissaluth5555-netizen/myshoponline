@@ -360,6 +360,13 @@
       font-weight: 700;
       cursor: pointer;
       transition: 0.25s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .add-cart-btn i {
+      font-size: 14px;
     }
     .add-cart-btn:hover { box-shadow: 0 6px 20px rgba(155, 77, 255, 0.4); }
 
@@ -416,6 +423,7 @@
       transform: scale(1.05);
     }
     .out-of-stock { background: #64748b !important; cursor: not-allowed; }
+    .out-of-stock i { font-size: 14px; }
 
     .cart-overlay, .wishlist-overlay, .order-history-overlay {
       position: fixed;
@@ -788,6 +796,10 @@
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
     /* MODALS */
@@ -961,7 +973,15 @@
     .qty-selector button { width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--input-bg); color: var(--text); font-weight: 700; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .qty-selector button:hover { background: linear-gradient(90deg, #ff4d8d, #9b4dff); color: white; }
     .qty-selector span { font-weight: 700; min-width: 28px; text-align: center; font-size: 17px; }
-    .modal-add-cart { flex: 1; max-width: 220px; background: linear-gradient(90deg, #ff4d8d, #9b4dff); color: white; border: none; padding: 14px 20px; border-radius: 50px; font-weight: 700; font-size: 15px; cursor: pointer; white-space: nowrap; }
+    .modal-add-cart {
+      flex: 1; max-width: 220px;
+      background: linear-gradient(90deg, #ff4d8d, #9b4dff);
+      color: white; border: none; padding: 14px 20px;
+      border-radius: 50px; font-weight: 700; font-size: 15px;
+      cursor: pointer; white-space: nowrap;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .modal-add-cart i { font-size: 14px; }
     .modal-add-cart:disabled { background: #64748b; cursor: not-allowed; }
 
     /* CUSTOM ALERT */
@@ -981,6 +1001,20 @@
     .custom-alert.error .custom-alert-icon { background: linear-gradient(135deg, #ef4444, #f87171); }
     .custom-alert.warning .custom-alert-icon { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
     .custom-alert.info .custom-alert-icon { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+
+    .custom-alert.heart .custom-alert-icon { background: linear-gradient(135deg, #ff4d8d, #ff6fa5); }
+    .custom-alert.heart .custom-alert-btn { background: linear-gradient(90deg, #ff4d8d, #ff6fa5); }
+    .custom-alert.heartBroken .custom-alert-icon { background: linear-gradient(135deg, #94a3b8, #cbd5e1); }
+    .custom-alert.heartBroken .custom-alert-btn { background: linear-gradient(90deg, #94a3b8, #cbd5e1); }
+    .custom-alert.cart .custom-alert-icon { background: linear-gradient(135deg, #10b981, #34d399); }
+    .custom-alert.cart .custom-alert-btn { background: linear-gradient(90deg, #10b981, #34d399); }
+    .custom-alert.lock .custom-alert-icon { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+    .custom-alert.lock .custom-alert-btn { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .custom-alert.stock .custom-alert-icon { background: linear-gradient(135deg, #ef4444, #f87171); }
+    .custom-alert.stock .custom-alert-btn { background: linear-gradient(90deg, #ef4444, #f87171); }
+    .custom-alert.ticket .custom-alert-icon { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+    .custom-alert.ticket .custom-alert-btn { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+
     .custom-alert-title { font-size: 20px; font-weight: 800; margin-bottom: 8px; color: var(--payment-text); }
     .custom-alert-body { padding: 0 24px 20px; text-align: center; }
     .custom-alert-message { font-size: 14.5px; line-height: 1.6; color: var(--payment-text-muted); font-weight: 500; word-break: break-word; }
@@ -1032,6 +1066,7 @@
       .product-name { font-size: 13px; }
       .product-price { font-size: 14px; }
       .add-cart-btn { padding: 7px 8px; font-size: 11px; }
+      .add-cart-btn i { font-size: 11px; }
       .heart-btn { width: 30px; height: 30px; font-size: 13px; top: 8px; right: 8px; }
     }
   </style>
@@ -1080,7 +1115,7 @@
   <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
   <div class="cart-sidebar" id="cartSidebar">
     <div class="cart-header">
-      <h2>Your Cart</h2>
+      <h2><i class="fa-solid fa-cart-shopping"></i> Your Cart</h2>
       <button class="close-cart" onclick="closeCart()">×</button>
     </div>
     <div class="cart-items" id="cartItems"></div>
@@ -1089,7 +1124,9 @@
         <span>Total:</span>
         <span id="cartTotal">$0.00</span>
       </div>
-      <button class="checkout-btn" id="checkoutBtn" onclick="checkout()">Checkout</button>
+      <button class="checkout-btn" id="checkoutBtn" onclick="checkout()">
+        <i class="fa-solid fa-credit-card"></i> Checkout
+      </button>
     </div>
   </div>
 
@@ -1117,7 +1154,7 @@
   <div class="cart-page2-overlay" id="cartPage2Overlay" onclick="closeCartPage2()"></div>
   <div class="cart-page2" id="cartPage2">
     <div class="cart-page2-header">
-      <h2>Your Cart - Page 2</h2>
+      <h2><i class="fa-solid fa-cart-shopping"></i> Your Cart - Page 2</h2>
       <button class="close-cart-page2" onclick="closeCartPage2()">×</button>
     </div>
 
@@ -1159,10 +1196,7 @@
           <input type="text" id="checkoutCity" placeholder="ឧទាហរណ៍៖ ភ្នំពេញ">
         </div>
         <button type="button" class="gps-btn" id="gpsBtn" onclick="getCurrentLocation()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
-          </svg>
+          <i class="fa-solid fa-location-crosshairs"></i>
           ចុចដើម្បីផ្ញើទីតាំង GPS
         </button>
         <div class="gps-result" id="gpsResult"></div>
@@ -1179,7 +1213,7 @@
           <input type="text" id="pickupAddress" placeholder="បញ្ចូលទីតាំងហាង" value="Virakbuntam Shop, ផ្លូវ 271, សង្កាត់ទួលគោក, ខណ្ឌទួលគោក, ភ្នំពេញ">
         </div>
         <div class="pickup-info-box">
-          ✅ សូមមកយកទំនិញនៅទីតាំងខាងលើ បន្ទាប់ពីបង់ប្រាក់រួច
+          <i class="fa-solid fa-circle-check"></i> សូមមកយកទំនិញនៅទីតាំងខាងលើ បន្ទាប់ពីបង់ប្រាក់រួច
         </div>
       </div>
 
@@ -1217,7 +1251,7 @@
         <span id="checkoutTotal">$0.00</span>
       </div>
       <button class="continue-btn" onclick="continueToPayment()">
-        បន្តទៅការបង់ប្រាក់ →
+        បន្តទៅការបង់ប្រាក់ <i class="fa-solid fa-arrow-right"></i>
       </button>
     </div>
   </div>
@@ -1227,10 +1261,7 @@
     <div class="modal-card">
       <div class="modal-header">
         <h2>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-            <line x1="1" y1="10" x2="23" y2="10"></line>
-          </svg>
+          <i class="fa-solid fa-qrcode"></i>
           បង់ប្រាក់តាម KHQR
         </h2>
       </div>
@@ -1253,10 +1284,7 @@
     <div class="receipt-card">
       <div class="receipt-header">
         <div style="font-size:42px;margin-bottom:8px;">
-          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-          </svg>
+          <i class="fa-solid fa-circle-check" style="color: white;"></i>
         </div>
         <h2>Order Successful!</h2>
         <p id="receiptTime"></p>
@@ -1295,7 +1323,9 @@
               <span id="modalQty">1</span>
               <button onclick="changeModalQty(1)">+</button>
             </div>
-            <button class="modal-add-cart" id="modalAddBtn" onclick="addFromModal()">Add to Cart</button>
+            <button class="modal-add-cart" id="modalAddBtn" onclick="addFromModal()">
+              <i class="fa-solid fa-cart-plus"></i> Add to Cart
+            </button>
           </div>
         </div>
       </div>
@@ -1306,7 +1336,9 @@
   <div class="custom-alert-overlay" id="customAlert">
     <div class="custom-alert" id="customAlertBox">
       <div class="custom-alert-header">
-        <div class="custom-alert-icon" id="customAlertIcon">✓</div>
+        <div class="custom-alert-icon" id="customAlertIcon">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
         <div class="custom-alert-title" id="customAlertTitle">Success</div>
       </div>
       <div class="custom-alert-body">
@@ -1323,7 +1355,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
   <script>
     // ==========================================
-    // CUSTOM ALERT SYSTEM
+    // CUSTOM ALERT SYSTEM WITH ICONS
     // ==========================================
     let customAlertResolve = null;
 
@@ -1337,13 +1369,59 @@
         const btn = document.getElementById('customAlertBtn');
 
         const config = {
-          success: { icon: '✓', title: title || 'Success', btnText: 'Great!' },
-          error: { icon: '✕', title: title || 'Error', btnText: 'OK' },
-          warning: { icon: '!', title: title || 'Warning', btnText: 'OK' },
-          info: { icon: 'i', title: title || 'Info', btnText: 'Got it' }
+          success: {
+            icon: '<i class="fa-solid fa-circle-check"></i>',
+            title: title || 'Success',
+            btnText: 'Great!'
+          },
+          error: {
+            icon: '<i class="fa-solid fa-circle-xmark"></i>',
+            title: title || 'Error',
+            btnText: 'OK'
+          },
+          warning: {
+            icon: '<i class="fa-solid fa-triangle-exclamation"></i>',
+            title: title || 'Warning',
+            btnText: 'OK'
+          },
+          info: {
+            icon: '<i class="fa-solid fa-circle-info"></i>',
+            title: title || 'Info',
+            btnText: 'Got it'
+          },
+          heart: {
+            icon: '<i class="fa-solid fa-heart"></i>',
+            title: title || 'Wishlist',
+            btnText: 'Great!'
+          },
+          heartBroken: {
+            icon: '<i class="fa-solid fa-heart-crack"></i>',
+            title: title || 'Removed',
+            btnText: 'OK'
+          },
+          cart: {
+            icon: '<i class="fa-solid fa-cart-plus"></i>',
+            title: title || 'Cart',
+            btnText: 'Great!'
+          },
+          lock: {
+            icon: '<i class="fa-solid fa-lock"></i>',
+            title: title || 'Login Required',
+            btnText: 'OK'
+          },
+          stock: {
+            icon: '<i class="fa-solid fa-boxes-stacked"></i>',
+            title: title || 'Stock',
+            btnText: 'OK'
+          },
+          ticket: {
+            icon: '<i class="fa-solid fa-ticket"></i>',
+            title: title || 'Discount',
+            btnText: 'OK'
+          }
         };
         const cfg = config[type] || config.info;
-        icon.textContent = cfg.icon;
+        icon.innerHTML = cfg.icon;
         titleEl.textContent = cfg.title;
         messageEl.textContent = message;
         btn.textContent = cfg.btnText;
@@ -1363,6 +1441,7 @@
     window.alert = function(message) {
       let type = 'info';
       let cleanMessage = String(message);
+
       if (cleanMessage.includes('✅') || cleanMessage.includes('✓')) {
         type = 'success';
         cleanMessage = cleanMessage.replace(/[✅✓]/g, '').trim();
@@ -1376,12 +1455,25 @@
         type = 'info';
         cleanMessage = cleanMessage.replace(/[📧⏱️⏱]/g, '').trim();
       } else if (cleanMessage.includes('❤️')) {
-        type = 'success';
+        type = 'heart';
         cleanMessage = cleanMessage.replace(/❤️/g, '').trim();
       } else if (cleanMessage.includes('💔')) {
-        type = 'info';
+        type = 'heartBroken';
         cleanMessage = cleanMessage.replace(/💔/g, '').trim();
+      } else if (cleanMessage.includes('🛒')) {
+        type = 'cart';
+        cleanMessage = cleanMessage.replace(/🛒/g, '').trim();
+      } else if (cleanMessage.includes('🔒')) {
+        type = 'lock';
+        cleanMessage = cleanMessage.replace(/🔒/g, '').trim();
+      } else if (cleanMessage.includes('📦')) {
+        type = 'stock';
+        cleanMessage = cleanMessage.replace(/📦/g, '').trim();
+      } else if (cleanMessage.includes('🎟️')) {
+        type = 'ticket';
+        cleanMessage = cleanMessage.replace(/[🎟️🎟]/g, '').trim();
       }
+
       showCustomAlert(cleanMessage, type);
     };
 
@@ -1558,7 +1650,9 @@
             <div class="product-footer">
               <div class="product-price">$${parseFloat(p.price || 0).toFixed(2)}</div>
               <button class="add-cart-btn ${p.stock <= 0 ? 'out-of-stock' : ''}" onclick="addToCart('${escapeHtml(p.id)}', event)" ${p.stock <= 0 ? 'disabled' : ''}>
-                ${p.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
+                ${p.stock <= 0 
+                  ? '<i class="fa-solid fa-ban"></i> Out of Stock' 
+                  : '<i class="fa-solid fa-cart-plus"></i> Add to Cart'}
               </button>
             </div>
           </div>
@@ -1602,8 +1696,8 @@
       }
 
       showCustomAlert(
-        isNowIn ? '❤️ បានបន្ថែមទៅបញ្ជីចង់បាន!' : '💔 បានដកចេញពីបញ្ជីចង់បាន',
-        isNowIn ? 'success' : 'info'
+        isNowIn ? 'បានបន្ថែមទៅបញ្ជីចង់បាន!' : 'បានដកចេញពីបញ្ជីចង់បាន',
+        isNowIn ? 'heart' : 'heartBroken'
       );
     }
 
@@ -1655,11 +1749,11 @@
     function addFromWishlist(productId) {
       const product = products.find(p => p.id === productId);
       if (!product || product.stock <= 0) {
-        return alert('⚠️ ស្តុកមិនគ្រប់គ្រាន់!');
+        return alert('📦 ស្តុកមិនគ្រប់គ្រាន់!');
       }
       const existing = cart.find(item => item.id === productId);
       if (existing) {
-        if (existing.qty >= product.stock) return alert('⚠️ ស្តុកមិនគ្រប់គ្រាន់!');
+        if (existing.qty >= product.stock) return alert('📦 ស្តុកមិនគ្រប់គ្រាន់!');
         existing.qty++;
       } else {
         cart.push({
@@ -1672,7 +1766,7 @@
       }
       saveCart();
       updateCartUI();
-      alert('✅ បានបន្ថែមទៅកន្ត្រក!');
+      alert('🛒 បានបន្ថែមទៅកន្ត្រក!');
     }
 
     // ==========================================
@@ -1777,10 +1871,10 @@
       const addBtn = document.getElementById('modalAddBtn');
       if (product.stock <= 0) {
         addBtn.disabled = true;
-        addBtn.textContent = 'Out of Stock';
+        addBtn.innerHTML = '<i class="fa-solid fa-ban"></i> Out of Stock';
       } else {
         addBtn.disabled = false;
-        addBtn.textContent = 'Add to Cart';
+        addBtn.innerHTML = '<i class="fa-solid fa-cart-plus"></i> Add to Cart';
       }
       document.getElementById('productModal').classList.add('show');
       document.body.style.overflow = 'hidden';
@@ -1806,7 +1900,7 @@
       if (!currentModalProduct || currentModalProduct.stock <= 0) return;
       const existing = cart.find(item => item.id === currentModalProduct.id);
       if (existing) {
-        if (existing.qty + modalQty > currentModalProduct.stock) return alert('⚠️ ស្តុកមិនគ្រប់គ្រាន់!');
+        if (existing.qty + modalQty > currentModalProduct.stock) return alert('📦 ស្តុកមិនគ្រប់គ្រាន់!');
         existing.qty += modalQty;
       } else {
         cart.push({
@@ -1825,7 +1919,7 @@
         btn.classList.remove('clicked');
         btn.classList.add('success');
         const originalText = btn.innerHTML;
-        btn.innerHTML = '✓ Added to Cart';
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Added to Cart';
         setTimeout(() => {
           btn.classList.remove('success');
           btn.innerHTML = originalText;
@@ -1846,7 +1940,7 @@
       if (!product || product.stock <= 0) return;
       const existing = cart.find(item => item.id === productId);
       if (existing) {
-        if (existing.qty >= product.stock) return alert('⚠️ ស្តុកមិនគ្រប់គ្រាន់!');
+        if (existing.qty >= product.stock) return alert('📦 ស្តុកមិនគ្រប់គ្រាន់!');
         existing.qty++;
       } else {
         cart.push({
@@ -1866,7 +1960,7 @@
           btn.classList.remove('clicked');
           btn.classList.add('success');
           const originalText = btn.innerHTML;
-          btn.innerHTML = '✓ Added';
+          btn.innerHTML = '<i class="fa-solid fa-check"></i> Added';
           setTimeout(() => {
             btn.classList.remove('success');
             btn.innerHTML = originalText;
@@ -1962,7 +2056,7 @@
       if (gpsBtn) {
         gpsBtn.classList.remove('success');
         gpsBtn.disabled = false;
-        gpsBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> ចុចដើម្បីផ្ញើទីតាំង GPS';
+        gpsBtn.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i> ចុចដើម្បីផ្ញើទីតាំង GPS';
       }
 
       document.getElementById('btnHome').classList.add('active');
@@ -2063,7 +2157,7 @@
             discountAmount = parseFloat(found.value) || 0;
           }
           discountAmount = Math.min(discountAmount, subtotal);
-          alert(`✅ ប្រើលេខកូដជោគជ័យ! បញ្ចុះ $${discountAmount.toFixed(2)}`);
+          alert(`🎟️ ប្រើលេខកូដជោគជ័យ! បញ្ចុះ $${discountAmount.toFixed(2)}`);
         } else {
           discountAmount = 0;
           alert('❌ លេខកូដមិនត្រឹមត្រូវ ឬមិនសកម្ម');
@@ -2081,13 +2175,13 @@
       result.textContent = 'កំពុងស្វែងរកទីតាំង...';
       result.style.color = '#f59e0b';
       btn.disabled = true;
-      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 0.8s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg> កំពុងស្វែងរក...';
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> កំពុងស្វែងរក...';
 
       if (!navigator.geolocation) {
         result.textContent = 'Browser មិនគាំទ្រ GPS';
         result.style.color = 'red';
         btn.disabled = false;
-        btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> ចុចដើម្បីផ្ញើទីតាំង GPS';
+        btn.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i> ចុចដើម្បីផ្ញើទីតាំង GPS';
         return;
       }
 
@@ -2098,14 +2192,14 @@
           result.textContent = `បានយកទីតាំង: ${userLat.toFixed(5)}, ${userLng.toFixed(5)}`;
           result.style.color = '#22c55e';
           btn.classList.add('success');
-          btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> បានយកទីតាំងរួច';
+          btn.innerHTML = '<i class="fa-solid fa-check"></i> បានយកទីតាំងរួច';
           btn.disabled = false;
         },
         (err) => {
           result.textContent = 'មិនអាចយកទីតាំងបាន (សូមអនុញ្ញាត Location)';
           result.style.color = 'red';
           btn.disabled = false;
-          btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> ចុចដើម្បីផ្ញើទីតាំង GPS';
+          btn.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i> ចុចដើម្បីផ្ញើទីតាំង GPS';
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
       );
@@ -2350,12 +2444,11 @@
             }
           }
 
-          // ⭐ ហៅ /notify-order ជាមួយ ID Token
           try {
             const notifyIdToken = await getIdToken();
             const notifyRes = await fetch(`${WORKER_URL}/notify-order`, {
               method: 'POST',
-              headers: { 
+              headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + notifyIdToken
               },
@@ -2383,7 +2476,7 @@
               })
             });
             const notifyData = await notifyRes.json();
-            console.log('📤 Notify response:', notifyData);
+            console.log('Notify response:', notifyData);
           } catch (err) {
             console.error('Telegram notify error:', err);
           }
